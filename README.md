@@ -16,7 +16,6 @@ Role Variables
 * `set_timezone` - change the time zone of the server
 * `set_google_dns` - if `true`, it will add Google DNS to the primary interface
 * `epel_dl` - URL of the EPEL RPM
-* `xmlrpc_dl` - URL of the XMLRPC
 * `libtorrent_dl` - URL of the libtorrent
 * `rtorrent_dl` - URL of the rtorrent
 * `rtorrent_port` - what port should rtorrent listen on

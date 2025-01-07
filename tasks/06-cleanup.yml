@@ -27,7 +27,6 @@
     state: absent
   become: true
   loop:
-    - "{{ xmlrpc_dl | urlsplit('path') | basename | regex_replace('.tgz') }}"
     - "{{ libtorrent_dl | urlsplit('path') | basename | regex_replace('.tar.gz') }}"
     - "{{ rtorrent_dl | urlsplit('path') | basename | regex_replace('.tar.gz') }}"
   tags:

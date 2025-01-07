@@ -7,7 +7,6 @@ set_google_dns: true
 
 # 02-rtorrent
 epel_dl: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
-xmlrpc_dl: "https://ixpeering.dl.sourceforge.net/project/xmlrpc-c/Xmlrpc-c%20Super%20Stable/1.60.04/xmlrpc-c-1.60.04.tgz"
 libtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.0/libtorrent-0.15.1.tar.gz"
 rtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.0/rtorrent-0.15.1.tar.gz"
 rtorrent_port: 55442

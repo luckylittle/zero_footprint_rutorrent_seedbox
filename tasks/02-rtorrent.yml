@@ -20,37 +20,14 @@
   tags:
     - rtorrent
 
-- name: RTORRENT | Unzip the xmlrpc, libtorrent & rtorrent
+- name: RTORRENT | Unzip the libtorrent & rtorrent
   ansible.builtin.unarchive:
     src: "{{ item }}"
     dest: "~"
     remote_src: true
   loop:
-    - "{{ xmlrpc_dl }}"
     - "{{ libtorrent_dl }}"
     - "{{ rtorrent_dl }}"
-  tags:
-    - rtorrent
-
-- name: RTORRENT | Compile xmlrpc - configure
-  ansible.builtin.command: "./configure"
-  args:
-    chdir: "~/{{ xmlrpc_dl | urlsplit('path') | basename | regex_replace('.tgz') }}"
-  tags:
-    - rtorrent
-
-- name: RTORRENT | Compile xmlrpc - make
-  ansible.builtin.command: "make"
-  args:
-    chdir: "~/{{ xmlrpc_dl | urlsplit('path') | basename | regex_replace('.tgz') }}"
-  tags:
-    - rtorrent
-
-- name: RTORRENT | Compile xmlrpc - make install
-  ansible.builtin.command: "make install"
-  args:
-    chdir: "/home/{{ ansible_user }}/{{ xmlrpc_dl | urlsplit('path') | basename | regex_replace('.tgz') }}"
-  become: true
   tags:
     - rtorrent
 
