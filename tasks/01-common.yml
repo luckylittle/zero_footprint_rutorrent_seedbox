@@ -20,6 +20,16 @@
   tags:
     - common
 
+- name: COMMON | Add the user with a specific uid and a primary group of 'wheel'
+  ansible.builtin.user:
+    name: "{{ new_user }}"
+    comment: "{{ new_user }}"
+    uid: 1000
+    group: wheel
+  when: create_new_user
+  tags:
+    - common
+
 - name: COMMON | Create a directory structure
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
@@ -97,9 +107,9 @@
     - common
 
 - name: COMMON | Autobrr service, part 1
-  ansible.builtin.copy:
-    src: autobrr/autobrr\@.service
-    dest: /etc/systemd/system/autobrr\@.service
+  ansible.builtin.template:
+    src: autobrr/autobrr.service.j2
+    dest: /etc/systemd/system/autobrr.service
     backup: false
   become: true
   tags:
@@ -111,10 +121,31 @@
   tags:
     - common
 
+- name: COMMON | Autobrr config directory
+  ansible.builtin.file:
+    path: /home/{{ ansible_user }}/.config/autobrr/
+    state: directory
+  tags:
+    - common
+
+- name: COMMON | Autobrr configuration, part 1
+  ansible.builtin.command: "head /dev/urandom | tr -dc A-Za-z0-9 | head -c16"
+  register: session_secret
+  tags:
+    - common
+
+- name: COMMON | Autobrr configuration, part 2
+  ansible.builtin.template:
+    src: autobrr/config.toml.j2
+    dest: /home/{{ ansible_user }}/.config/autobrr/config.toml
+  tags:
+    - common
+
 - name: COMMON | Autobrr installation, part 1
   ansible.builtin.template:
-    src: autobrr/upgrade_autobrr.sh
+    src: autobrr/upgrade_autobrr.sh.j2
     dest: /home/{{ ansible_user }}/upgrade_autobrr.sh
+    mode: u=rwx,g=rx,o=rx
   tags:
     - common
 

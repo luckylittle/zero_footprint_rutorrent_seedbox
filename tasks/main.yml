@@ -1,36 +1,36 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox
-- name: Include 01-common.yml
+- name: MAIN | Include 01-common.yml
   ansible.builtin.include_tasks: 01-common.yml
   tags:
     - common
 
-- name: Include 02-rtorrent.yml
+- name: MAIN | Include 02-rtorrent.yml
   ansible.builtin.include_tasks: 02-rtorrent.yml
   tags:
     - rtorrent
 
-- name: Include 03-vsftpd.yml
+- name: MAIN | Include 03-vsftpd.yml
   ansible.builtin.include_tasks: 03-vsftpd.yml
   tags:
     - vsftpd
 
-- name: Include 04-rutorrent.yml
+- name: MAIN | Include 04-rutorrent.yml
   ansible.builtin.include_tasks: 04-rutorrent.yml
   tags:
     - rutorrent
 
-- name: Include 05-security.yml
+- name: MAIN | Include 05-security.yml
   ansible.builtin.include_tasks: 05-security.yml
   tags:
     - security
 
-- name: Include 06-cleanup.yml
+- name: MAIN | Include 06-cleanup.yml
   ansible.builtin.include_tasks: 06-cleanup.yml
   tags:
     - cleanup
 
-- name: Include 07-reboot.yml
+- name: MAIN | Include 07-reboot.yml
   ansible.builtin.include_tasks: 07-reboot.yml
   tags:
     - reboot

@@ -1,1 +1,6 @@
 files/vsftpd/users.txt
+.venv
+.terraform
+.travis.yml
+.terraform.lock.hcl
+.terraform.tfstate.backup

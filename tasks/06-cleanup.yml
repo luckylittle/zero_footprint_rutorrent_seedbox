@@ -122,12 +122,20 @@
   tags:
     - cleanup
 
+- name: CLEANUP | Check if bootlog logrotate config exists
+  ansible.builtin.stat:
+    path: /etc/logrotate.d/bootlog
+  register: bootlog_file
+  tags:
+    - cleanup
+
 - name: CLEANUP | Minimise bootlog logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/bootlog
     regexp: '^    rotate 7$'
     line: "    rotate 1"
   become: true
+  when: bootlog_file.stat.exists
   tags:
     - cleanup
 
@@ -176,12 +184,20 @@
   tags:
     - cleanup
 
+- name: CLEANUP | Check if iscsiuiolog logrotate config exists
+  ansible.builtin.stat:
+    path: /etc/logrotate.d/iscsiuiolog
+  register: iscsiuiolog_file
+  tags:
+    - cleanup
+
 - name: CLEANUP | Minimise iscsiuiolog logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/iscsiuiolog
     regexp: '^    weekly$'
     line: "    daily"
   become: true
+  when: iscsiuiolog_file.stat.exists
   tags:
     - cleanup
 
@@ -191,6 +207,14 @@
     regexp: '^    rotate 4$'
     line: "    rotate 1"
   become: true
+  when: iscsiuiolog_file.stat.exists
+  tags:
+    - cleanup
+
+- name: CLEANUP | Check if psacct logrotate config exists
+  ansible.builtin.stat:
+    path: /etc/logrotate.d/psacct
+  register: psacct_file
   tags:
     - cleanup
 
@@ -200,6 +224,14 @@
     regexp: '^    rotate 31$'
     line: "    rotate 1"
   become: true
+  when: psacct_file.stat.exists
+  tags:
+    - cleanup
+
+- name: CLEANUP | Check if psacct logrotate config exists
+  ansible.builtin.stat:
+    path: /etc/logrotate.d/samba
+  register: samba_file
   tags:
     - cleanup
 
@@ -209,6 +241,7 @@
     regexp: '^    rotate 99$'
     line: "    rotate 1"
   become: true
+  when: samba_file.stat.exists
   tags:
     - cleanup
 

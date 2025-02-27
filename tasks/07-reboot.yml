@@ -8,6 +8,7 @@
     name: "{{ item }}"
   become: true
   loop:
+    - autobrr
     - fail2ban
     - lighttpd
     - php-fpm

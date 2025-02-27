@@ -3,12 +3,17 @@
 
 # 01-common
 set_timezone: "Europe/Prague"
-set_google_dns: true
+set_google_dns: false
+create_new_user: false
+new_user: redhat
+autobrr_version: '1.58.0'
+autobrr_port: 7474
 
 # 02-rtorrent
-epel_dl: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
-libtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.0/libtorrent-0.15.1.tar.gz"
-rtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.0/rtorrent-0.15.1.tar.gz"
+# epel_dl: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+epel_dl: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
+libtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.1/libtorrent-0.15.1.tar.gz"
+rtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.1/rtorrent-0.15.1.tar.gz"
 rtorrent_port: 55442
 rt_memory_max_set: "{{ ((ansible_memtotal_mb * 3) / 4) | round | int }}M"
 
