@@ -70,7 +70,7 @@
   become: true
   loop:
     - ssh
-    - http
+    - https
   tags:
     - security
 
@@ -86,7 +86,6 @@
     - "{{ rtorrent_port }}/udp"
     - "{{ ftp_port }}/tcp"
     - "{{ pasv_port_range }}/tcp"
-    - "{{ pasv_port_range }}/udp"
     - "7474/tcp"
   tags:
     - security
@@ -100,15 +99,6 @@
   become: true
   notify:
     - "Reload firewalld"
-  tags:
-    - security
-
-- name: SECURITY | Reload service firewalld
-  ansible.builtin.service:
-    name: firewalld
-    state: reloaded
-    enabled: true
-  become: true
   tags:
     - security
 

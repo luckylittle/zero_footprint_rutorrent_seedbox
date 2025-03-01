@@ -1,5 +1,13 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox
+- name: COMMON | Upgrade all existing packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+  become: true
+  tags:
+    - common
+
 - name: COMMON | Set timezone
   community.general.timezone:
     name: "{{ set_timezone }}"
@@ -34,6 +42,7 @@
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: directory
+    mode: u=rwx,g=rwx,o=rwx
   loop:
     - .Session
     - site
@@ -109,7 +118,7 @@
 - name: COMMON | Autobrr service, part 1
   ansible.builtin.template:
     src: autobrr/autobrr.service.j2
-    dest: /etc/systemd/system/autobrr.service
+    dest: /etc/systemd/system/autobrr@.service
     backup: false
   become: true
   tags:
@@ -129,7 +138,7 @@
     - common
 
 - name: COMMON | Autobrr configuration, part 1
-  ansible.builtin.command: "head /dev/urandom | tr -dc A-Za-z0-9 | head -c16"
+  ansible.builtin.shell: "head /dev/urandom | tr -dc A-Za-z0-9 | head -c32"
   register: session_secret
   tags:
     - common
@@ -141,15 +150,30 @@
   tags:
     - common
 
-- name: COMMON | Autobrr installation, part 1
+- name: COMMON | Unarchive Autobrr
+  ansible.builtin.unarchive:
+    src: https://github.com/autobrr/autobrr/releases/download/v{{ autobrr_version }}/autobrr_{{ autobrr_version }}_linux_x86_64.tar.gz
+    dest: /home/{{ ansible_user }}
+    remote_src: yes
+  tags:
+    - common
+
+- name: COMMON | Install Autobrr
+  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/{{ ansible_user }}/autobrrctl /usr/local/bin/"
+  become: true
+  tags:
+    - common
+
+- name: COMMON | Install Autobrr
+  ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
+  become: true
+  tags:
+    - common
+
+- name: COMMON | Autobrr backup script
   ansible.builtin.template:
     src: autobrr/upgrade_autobrr.sh.j2
     dest: /home/{{ ansible_user }}/upgrade_autobrr.sh
     mode: u=rwx,g=rx,o=rx
-  tags:
-    - common
-
-- name: COMMON | Autobrr installation, part 2
-  ansible.builtin.command: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
   tags:
     - common

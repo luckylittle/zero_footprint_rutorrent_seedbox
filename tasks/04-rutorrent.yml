@@ -19,6 +19,14 @@
   tags:
     - rutorrent
 
+- name: RUTORRENT | Remove old ruTorrent folder
+  ansible.builtin.file:
+    path: "/var/www/ruTorrent/"
+    state: absent
+  become: true
+  tags:
+    - rutorrent
+
 - name: RUTORRENT | Create a directory structure
   ansible.builtin.file:
     path: "/var/www/ruTorrent"
@@ -40,7 +48,7 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | Stat rutorrent
+- name: RUTORRENT | Stat ruTorrent
   ansible.builtin.stat:
     path: "/var/www/ruTorrent/ruTorrent-{{ rutorrent_dl | urlsplit('path') | basename | regex_replace('^v') | regex_replace('.tar.gz') }}"
   register: rutorrent_stat

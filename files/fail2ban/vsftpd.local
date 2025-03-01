@@ -1,2 +1,4 @@
 [vsftpd]
 enabled=true
+backend = systemd
+logpath = journal

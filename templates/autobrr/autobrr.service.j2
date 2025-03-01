@@ -1,11 +1,12 @@
 [Unit]
-Description=Autobrr service
+Description=autobrr service for %i
 After=syslog.target network-online.target
 
 [Service]
 Type=simple
-User={{ ansible_user }}
-ExecStart=/usr/local/bin/autobrr --config=/home/{{ ansible_user }}/.config/autobrr/
+User=%i
+Group=%i
+ExecStart=/usr/local/bin/autobrr --config=/home/%i/.config/autobrr/
 
 [Install]
 WantedBy=multi-user.target

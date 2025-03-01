@@ -55,13 +55,24 @@
   tags:
     - cleanup
 
+- name: CLEANUP | Remove unnecessary Autobrr files
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/{{ item }}"
+    state: absent
+  loop:
+    - autobrr_{{ autobrr_version }}_linux_x86_64.tar.gz
+    - LICENSE
+    - README.md
+  tags:
+    - cleanup
+
 - name: CLEANUP | Clean DNF cache
   ansible.builtin.command: "dnf clean all"
   become: true
   tags:
     - cleanup
 
-- name: CLEANUP | Disable rsyslog & auditd services
+- name: CLEANUP | Disable rsyslog & auditd
   ansible.builtin.systemd:
     enabled: false
     name: "{{ item }}"
@@ -69,6 +80,17 @@
   loop:
     - rsyslog
     - auditd
+  tags:
+    - cleanup
+
+- name: CLEANUP | Change journald storage to RAM
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/journald.conf
+    regexp: '^#Storage=.*'
+    line: Storage=volatile
+  notify:
+    - "Restart journal"
+  become: true
   tags:
     - cleanup
 

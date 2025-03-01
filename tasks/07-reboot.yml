@@ -1,6 +1,13 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox
-- name: REBOOT | Enable required services
+
+- name: REBOOT | Enable required services, part 1
+  ansible.builtin.set_fact:
+    autobrr_service: "autobrr@{{ ansible_user }}"
+  tags:
+    - reboot
+
+- name: REBOOT | Enable required services, part 2
   ansible.builtin.systemd:
     state: stopped
     enabled: true
@@ -8,12 +15,12 @@
     name: "{{ item }}"
   become: true
   loop:
-    - autobrr
-    - fail2ban
-    - lighttpd
-    - php-fpm
-    - rtorrent
-    - vsftpd
+    - "{{ autobrr_service }}"
+    - "fail2ban"
+    - "lighttpd"
+    - "php-fpm"
+    - "rtorrent"
+    - "vsftpd"
   tags:
     - reboot
 
