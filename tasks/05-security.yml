@@ -6,28 +6,29 @@
     state: present
   become: true
   loop:
-    - firewalld
-    - fail2ban
-    - policycoreutils-devel
+    - "firewalld"
+    - "fail2ban"
+    - "policycoreutils-devel"
   tags:
     - security
 
 - name: SECURITY | 5.2 Ensure SELinux is set to enforcing mode
   ansible.builtin.lineinfile:
-    path: /etc/selinux/config
+    path: "/etc/selinux/config"
     regexp: '^SELINUX='
-    line: SELINUX=enforcing
+    line: "SELINUX=enforcing"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.3 Copy the SELinux modules (for ruTorrent & tmux)
   ansible.builtin.copy:
-    src: selinux/{{ item }}
-    dest: /tmp/{{ item }}
+    src: "selinux/{{ item }}"
+    dest: "/tmp/{{ item }}"
+    mode: "0644"
   loop:
-    - rutorrent.te
-    - tmux.te
+    - "rutorrent.te"
+    - "tmux.te"
   tags:
     - security
 
@@ -37,8 +38,8 @@
   args:
     chdir: "/tmp"
   loop:
-    - rutorrent.te
-    - tmux.te
+    - "rutorrent.te"
+    - "tmux.te"
   tags:
     - security
 
@@ -48,15 +49,15 @@
     chdir: "/tmp"
   become: true
   loop:
-    - rutorrent.pp
-    - tmux.pp
+    - "rutorrent.pp"
+    - "tmux.pp"
   tags:
     - security
 
 - name: SECURITY | 5.6 Start service firewalld
   ansible.builtin.service:
-    name: firewalld
-    state: started
+    name: "firewalld"
+    state: "started"
     enabled: true
   become: true
   tags:
@@ -67,7 +68,7 @@
     service: "{{ item }}"
     permanent: true
     immediate: true
-    state: enabled
+    state: "enabled"
   become: true
   loop:
     - ssh
@@ -81,7 +82,7 @@
     port: "{{ item }}"
     permanent: true
     immediate: true
-    state: enabled
+    state: "enabled"
   become: true
   loop:
     - "{{ rtorrent_port }}/tcp"
@@ -97,7 +98,7 @@
     service: "cockpit"
     permanent: true
     immediate: true
-    state: disabled
+    state: "disabled"
   become: true
   notify:
     - "Reload firewalld"
@@ -106,52 +107,57 @@
 
 - name: SECURITY | 5.10 Template the configuration for SSHD
   ansible.builtin.template:
-    src: sshd/sshd_config.j2
-    dest: /etc/ssh/sshd_config
+    src: "sshd/sshd_config.j2"
+    dest: "/etc/ssh/sshd_config"
     backup: true
+    mode: "0600"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.11 Copy the configuration for Fail2Ban (jail)
   ansible.builtin.copy:
-    src: fail2ban/jail.local
-    dest: /etc/fail2ban/jail.local
+    src: "fail2ban/jail.local"
+    dest: "/etc/fail2ban/jail.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.12 Copy the configuration for Fail2Ban (lighttpd)
   ansible.builtin.copy:
-    src: fail2ban/lighttpd-auth.local
-    dest: /etc/fail2ban/jail.d/lighttpd-auth.local
+    src: "fail2ban/lighttpd-auth.local"
+    dest: "/etc/fail2ban/jail.d/lighttpd-auth.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.13 Copy the configuration for Fail2Ban (sshd)
   ansible.builtin.copy:
-    src: fail2ban/sshd.local
-    dest: /etc/fail2ban/jail.d/sshd.local
+    src: "fail2ban/sshd.local"
+    dest: "/etc/fail2ban/jail.d/sshd.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.14 Copy the configuration for Fail2Ban (vsftpd)
   ansible.builtin.copy:
-    src: fail2ban/vsftpd.local
-    dest: /etc/fail2ban/jail.d/vsftpd.local
+    src: "fail2ban/vsftpd.local"
+    dest: "/etc/fail2ban/jail.d/vsftpd.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.15 Make exceptions for some IP addresses for Fail2Ban
   ansible.builtin.lineinfile:
-    path: /etc/fail2ban/jail.conf
+    path: "/etc/fail2ban/jail.conf"
     regexp: '^#ignoreip = 127.0.0.1/8 ::1$'
     line: "ignoreip = 127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 \
           172.16.0.0/12 {{ fail2ban_ignore_ipv4 }}"
@@ -162,16 +168,16 @@
 
 - name: SECURITY | 5.16 Change logging of Fail2Ban to systemd
   ansible.builtin.lineinfile:
-    path: /etc/fail2ban/fail2ban.conf
+    path: "/etc/fail2ban/fail2ban.conf"
     regexp: '^logtarget =.*'
-    line: logtarget = SYSTEMD-JOURNAL
+    line: "logtarget = SYSTEMD-JOURNAL"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.17 Disable shell history
   ansible.builtin.lineinfile:
-    path: /etc/profile
+    path: "/etc/profile"
     regexp: '^HISTSIZE=1000$'
     line: "HISTSIZE=0\nHISTFILE=/dev/null"
     backup: true

@@ -3,7 +3,7 @@
 - name: COMMON | 1.1 Upgrade all existing packages
   ansible.builtin.dnf:
     name: "*"
-    state: latest
+    state: "latest"  # noqa package-latest
   become: true
   tags:
     - common
@@ -18,11 +18,11 @@
 - name: COMMON | 1.3 Add two IPv4 Google DNS servers (Optional)
   community.general.nmcli:
     conn_name: "{{ ansible_default_ipv4.alias }}"
-    type: ethernet
+    type: "ethernet"
     dns4:
       - 8.8.8.8
       - 8.8.4.4
-    state: present
+    state: "present"
   become: true
   when: set_google_dns
   tags:
@@ -34,7 +34,7 @@
     name: "{{ new_user }}"
     comment: "{{ new_user }}"
     uid: 1000
-    group: wheel
+    group: "wheel"
   when: create_new_user
   tags:
     - common
@@ -42,44 +42,44 @@
 - name: COMMON | 1.5 Create a directory structure
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
-    state: directory
-    mode: u=rwx,g=rwx,o=rwx
+    state: "directory"
+    mode: "u=rwx,g=rwx,o=rwx"
   loop:
-    - .Session
-    - site
-    - site/.WatchAPPZ
-    - site/.WatchGAMES
-    - site/.WatchMISC
-    - site/.WatchMP3
-    - site/.WatchTV-HD
-    - site/.WatchTV-SD
-    - site/.WatchMOVIES-HD
-    - site/.WatchMOVIES-SD
-    - site/.WatchXXX
-    - site/APPZ
-    - site/GAMES
-    - site/MISC
-    - site/MP3
-    - site/TV-HD
-    - site/TV-SD
-    - site/MOVIES-HD
-    - site/MOVIES-SD
-    - site/XXX
-    - site/UPLOAD
+    - ".Session"
+    - "site"
+    - "site/.WatchAPPZ"
+    - "site/.WatchGAMES"
+    - "site/.WatchMISC"
+    - "site/.WatchMP3"
+    - "site/.WatchTV-HD"
+    - "site/.WatchTV-SD"
+    - "site/.WatchMOVIES-HD"
+    - "site/.WatchMOVIES-SD"
+    - "site/.WatchXXX"
+    - "site/APPZ"
+    - "site/GAMES"
+    - "site/MISC"
+    - "site/MP3"
+    - "site/TV-HD"
+    - "site/TV-SD"
+    - "site/MOVIES-HD"
+    - "site/MOVIES-SD"
+    - "site/XXX"
+    - "site/UPLOAD"
   tags:
     - common
 
 - name: COMMON | 1.6 Change home folder permissions
   ansible.builtin.file:
-    path: /home/{{ ansible_user }}
-    mode: 0711
+    path: "/home/{{ ansible_user }}"
+    mode: "0711"
   tags:
     - common
 
 - name: COMMON | 1.7 Remove unnecessary messages of the day
   ansible.builtin.file:
     path: "/etc/motd.d/{{ item }}"
-    state: absent
+    state: "absent"
   become: true
   loop:
     - "cockpit"
@@ -117,71 +117,71 @@
     path: "~/.bashrc"
     line: "alias rt=\"tmux a\""
     create: true
+    mode: "0644"
   tags:
     - common
 
 - name: COMMON | 1.11 Add Autobrr service
   ansible.builtin.template:
-    src: autobrr/autobrr.service.j2
-    dest: /etc/systemd/system/autobrr@.service
+    src: "autobrr/autobrr.service.j2"
+    dest: "/etc/systemd/system/autobrr@.service"
     backup: false
+    mode: "0644"
   become: true
   tags:
     - common
 
-- name: COMMON | 1.12 Reload systemd after installing Autobrr service
-  ansible.builtin.command: "systemctl daemon-reload"
-  become: true
-  tags:
-    - common
-
-- name: COMMON | 1.13 Add Autobrr config directory
+- name: COMMON | 1.12 Add Autobrr config directory
   ansible.builtin.file:
-    path: /home/{{ ansible_user }}/.config/autobrr/
-    state: directory
+    path: "/home/{{ ansible_user }}/.config/autobrr/"
+    state: "directory"
+    mode: "0755"
   tags:
     - common
 
-- name: COMMON | 1.14 Generate session secret for Autobrr
-  ansible.builtin.shell: "head /dev/urandom | tr -dc A-Za-z0-9 | head -c32"
+- name: COMMON | 1.13 Generate session secret for Autobrr
+  ansible.builtin.shell:
+    cmd: "set -o pipefail && head /dev/urandom | tr -dc A-Za-z0-9 | head -c32"
+    executable: "/bin/bash"
   register: session_secret
   tags:
     - common
 
-- name: COMMON | 1.15 Add Autobrr configuration file
+- name: COMMON | 1.14 Add Autobrr configuration file
   ansible.builtin.template:
-    src: autobrr/config.toml.j2
-    dest: /home/{{ ansible_user }}/.config/autobrr/config.toml
+    src: "autobrr/config.toml.j2"
+    dest: "/home/{{ ansible_user }}/.config/autobrr/config.toml"
+    mode: "0644"
   tags:
     - common
 
-- name: COMMON | 1.16 Unarchive Autobrr
+- name: COMMON | 1.15 Unarchive Autobrr
   ansible.builtin.unarchive:
-    src: https://github.com/autobrr/autobrr/releases/download/\
+    src: "https://github.com/autobrr/autobrr/releases/download/\
           v{{ autobrr_version }}/autobrr_{{ autobrr_version }}_\
-          linux_x86_64.tar.gz
-    dest: /home/{{ ansible_user }}
+          linux_x86_64.tar.gz"
+    dest: "/home/{{ ansible_user }}"
     remote_src: true
   tags:
     - common
 
-- name: COMMON | 1.17 Install Autobrr binaries
+- name: COMMON | 1.16 Install Autobrr binaries
   ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/\
                             {{ ansible_user }}/autobrrctl /usr/local/bin/"
   become: true
   tags:
     - common
 
-- name: COMMON | 1.18 Restore Autobrr files default SELinux security contexts
+- name: COMMON | 1.17 Restore Autobrr files default SELinux security contexts
   ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
   become: true
   tags:
     - common
 
-- name: COMMON | 1.19 Add Autobrr backup & upgrade shell script
+- name: COMMON | 1.18 Add Autobrr backup & upgrade shell script
   ansible.builtin.template:
-    src: autobrr/upgrade_autobrr.sh.j2
-    dest: /home/{{ ansible_user }}/upgrade_autobrr.sh
-    mode: u=rwx,g=rx,o=rx
+    src: "autobrr/upgrade_autobrr.sh.j2"
+    dest: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
+    mode: "u=rwx,g=rx,o=rx"
   tags:
     - common

@@ -9,7 +9,7 @@
 
 - name: REBOOT | 7.2 Enable all required services
   ansible.builtin.systemd:
-    state: stopped
+    state: "stopped"
     enabled: true
     daemon_reload: true
     name: "{{ item }}"
@@ -36,7 +36,7 @@
         (cannot be done before that)
   community.general.filesize:
     path: "/var/log/audit/audit.log"
-    size: 0B
+    size: "0B"
   become: true
   tags:
     - reboot

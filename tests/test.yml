@@ -1,4 +1,4 @@
 ---
 - hosts: all
   roles:
-    - ansible-role-zero-footprint-ruT-seedbox
+    - "zero_footprint_rutorrent_seedbox"

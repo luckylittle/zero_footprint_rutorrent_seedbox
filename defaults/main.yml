@@ -5,8 +5,8 @@
 set_timezone: "Europe/Prague"
 set_google_dns: false
 create_new_user: false
-new_user: redhat
-autobrr_version: '1.58.0'
+new_user: "redhat"
+autobrr_version: "1.58.0"
 autobrr_port: 7474
 
 # 02-rtorrent
@@ -21,7 +21,7 @@ rt_memory_max_set: "{{ ((ansible_memtotal_mb * 3) / 4) | round | int }}M"
 
 # 03-vsftpd
 ftp_port: 55443
-pasv_port_range: 64000-64321
+pasv_port_range: "64000-64321"
 single_user: false
 
 # 04-rutorrent
@@ -39,7 +39,7 @@ htpasswd: !vault |
 # command. The value is `r3dh4t`, password to decrypt is `password1`.
 
 # 05-security
-fail2ban_ignore_ipv4: '123.124.125.126'
+fail2ban_ignore_ipv4: "123.124.125.126"
 
 # 07-reboot
 require_reboot: true

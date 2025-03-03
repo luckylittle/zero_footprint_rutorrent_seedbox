@@ -6,36 +6,39 @@
     state: present
   become: true
   loop:
-    - python3-cryptography
-    - vsftpd
-    - libdb-utils
+    - "python3-cryptography"
+    - "vsftpd"
+    - "libdb-utils"
   tags:
     - vsftpd
 
 - name: VSFTPD | 3.2 Create a directory structure for SSL certificates
   ansible.builtin.file:
     path: "/etc/ssl/private"
-    state: directory
+    state: "directory"
+    mode: "0755"
   become: true
   tags:
     - vsftpd
 
 - name: VSFTPD | 3.3 Determine public IPv4 address
-  ansible.builtin.command: curl -4 http://icanhazip.com
+  ansible.builtin.uri:
+    url: "http://icanhazip.com"
+    return_content: true
   register: public_ip
   tags:
     - vsftpd
 
 - name: VSFTPD | 3.4 Store public IPv4 address as a fact
   ansible.builtin.set_fact:
-    ansible_public_ipv4: "{{ public_ip.stdout }}"
+    ansible_public_ipv4: "{{ public_ip.content | trim }}"
     cacheable: true
   tags:
     - vsftpd
 
 - name: VSFTPD | 3.5 Create private key (RSA, 4096 bits)
   community.crypto.openssl_privatekey:
-    path: /etc/ssl/private/vsftpd.key
+    path: "/etc/ssl/private/vsftpd.key"
   become: true
   tags:
     - vsftpd
@@ -43,12 +46,12 @@
 - name: VSFTPD | 3.6 Generate an OpenSSL Certificate \
         Signing Request with Subject information
   community.crypto.openssl_csr:
-    path: /etc/ssl/private/vsftpd.csr
-    privatekey_path: /etc/ssl/private/vsftpd.key
-    country_name: US
-    organization_name: RH
-    organizational_unit_name: RH
-    email_address: none@none.none
+    path: "/etc/ssl/private/vsftpd.csr"
+    privatekey_path: "/etc/ssl/private/vsftpd.key"
+    country_name: "US"
+    organization_name: "RH"
+    organizational_unit_name: "RH"
+    email_address: "none@none.none"
     common_name: "{{ ansible_public_ipv4 }}"
     backup: true
   become: true
@@ -57,10 +60,10 @@
 
 - name: VSFTPD | 3.7 Generate a Self Signed OpenSSL certificate
   community.crypto.x509_certificate:
-    path: /etc/ssl/private/vsftpd.pem
-    privatekey_path: /etc/ssl/private/vsftpd.key
-    csr_path: /etc/ssl/private/vsftpd.csr
-    provider: selfsigned
+    path: "/etc/ssl/private/vsftpd.pem"
+    privatekey_path: "/etc/ssl/private/vsftpd.key"
+    csr_path: "/etc/ssl/private/vsftpd.csr"
+    provider: "selfsigned"
     backup: true
   become: true
   tags:
@@ -68,24 +71,32 @@
 
 - name: VSFTPD | 3.8 Template the configuration for vsftpd
   ansible.builtin.template:
-    src: vsftpd/vsftpd.conf.j2
-    dest: /etc/vsftpd/vsftpd.conf
+    src: "vsftpd/vsftpd.conf.j2"
+    dest: "/etc/vsftpd/vsftpd.conf"
+    mode: "0600"
     backup: true
   become: true
   tags:
     - vsftpd
 
 - name: VSFTPD | 3.9 Configure vsftpd for multiple users (in users.txt)
+  when: not single_user
+  become: true
+  tags:
+    - vsftpd
   block:
     - name: VSFTPD | 3.9.1 Copy the users.txt
       ansible.builtin.copy:
-        src: vsftpd/users.txt
+        src: "vsftpd/users.txt"
         dest: "~"
+      mode: "0644"
 
     - name: VSFTPD | 3.9.2 Get only the users from \
             users.txt, except for ansible_user
-      ansible.builtin.shell: "awk '{if(NR%2!=0)print}' ~/users.txt \
-                              | grep -v {{ ansible_user }}"
+      ansible.builtin.shell:
+        cmd: "set -o pipefail && awk '{if(NR%2!=0)print}' ~/users.txt \
+             | grep -v {{ ansible_user }}"
+        executable: /bin/bash
       become: true
       register: vsftpd_additional_users
 
@@ -106,14 +117,11 @@
     - name: VSFTPD | 3.9.5 Remove unnecessary file
       ansible.builtin.file:
         path: "~/users.txt"
-        state: absent
+        state: "absent"
 
     - name: VSFTPD | 3.9.6 Copy the vsftpd configuration for PAM
       ansible.builtin.copy:
-        src: pam/vsftpd
-        dest: /etc/pam.d/vsftpd
+        src: "pam/vsftpd"
+        dest: "/etc/pam.d/vsftpd"
         backup: true
-  become: true
-  when: not single_user
-  tags:
-    - vsftpd
+        mode: "0644"

@@ -7,22 +7,22 @@
     disable_gpg_check: true
   become: true
   loop:
-    - lighttpd
-    - lighttpd-fastcgi
-    - php
-    - php-dom
-    - php-fpm
-    - php-json
-    - php-mbstring
-    - php-libxml
-    - python3-passlib
+    - "lighttpd"
+    - "lighttpd-fastcgi"
+    - "php"
+    - "php-dom"
+    - "php-fpm"
+    - "php-json"
+    - "php-mbstring"
+    - "php-libxml"
+    - "python3-passlib"
   tags:
     - rutorrent
 
 - name: RUTORRENT | 4.2 Remove old ruTorrent folder (for idempotency reasons)
   ansible.builtin.file:
     path: "/var/www/ruTorrent/"
-    state: absent
+    state: "absent"
   become: true
   tags:
     - rutorrent
@@ -30,9 +30,10 @@
 - name: RUTORRENT | 4.3 Create a directory structure
   ansible.builtin.file:
     path: "/var/www/ruTorrent"
-    state: directory
-    owner: lighttpd
-    group: lighttpd
+    state: "directory"
+    owner: "lighttpd"
+    group: "lighttpd"
+    mode: "0755"
   become: true
   tags:
     - rutorrent
@@ -41,8 +42,8 @@
   ansible.builtin.unarchive:
     src: "{{ rutorrent_dl }}"
     dest: "/var/www/ruTorrent"
-    owner: lighttpd
-    group: lighttpd
+    owner: "lighttpd"
+    group: "lighttpd"
     remote_src: true
   become: true
   tags:
@@ -69,30 +70,32 @@
 - name: RUTORRENT | 4.7 Remove temporary directory
   ansible.builtin.file:
     path: "/var/www/ruTorrent/ruTorrent-{{ rutorrent_dl | \
-          urlsplit('path') | basename | regex_replace('^v')\
-           | regex_replace('.tar.gz') }}"
-    state: absent
+          urlsplit('path') | basename | regex_replace('^v') \
+          | regex_replace('.tar.gz') }}"
+    state: "absent"
   become: true
   tags:
     - rutorrent
 
 - name: RUTORRENT | 4.8 Template the configuration for ruTorrent
   ansible.builtin.template:
-    src: rtorrent/config.php.j2
-    dest: /var/www/ruTorrent/conf/config.php
-    owner: lighttpd
-    group: lighttpd
+    src: "rtorrent/config.php.j2"
+    dest: "/var/www/ruTorrent/conf/config.php"
+    owner: "lighttpd"
+    group: "lighttpd"
     backup: true
+    mode: "0664"
   become: true
   tags:
     - rutorrent
 
 - name: RUTORRENT | 4.9 Disable unnecessary ruTorrent plugins
   ansible.builtin.lineinfile:
-    path: /var/www/ruTorrent/conf/plugins.ini
+    path: "/var/www/ruTorrent/conf/plugins.ini"
     line: "{{ item }}"
     create: true
     backup: true
+    mode: "0664"
   become: true
   loop:
     - "[_cloudflare] enabled = no"
@@ -121,45 +124,50 @@
 
 - name: RUTORRENT | 4.10 Copy the configuration for php-fpm
   ansible.builtin.copy:
-    src: lighttpd/www.conf
-    dest: /etc/php-fpm.d/www.conf
+    src: "lighttpd/www.conf"
+    dest: "/etc/php-fpm.d/www.conf"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - rutorrent
 
 - name: RUTORRENT | 4.11 Template the configuration for lighttpd
   ansible.builtin.template:
-    src: lighttpd/lighttpd.conf.j2
-    dest: /etc/lighttpd/lighttpd.conf
+    src: "lighttpd/lighttpd.conf.j2"
+    dest: "/etc/lighttpd/lighttpd.conf"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - rutorrent
 
 - name: RUTORRENT | 4.12 Copy the configuration for lighttpd modules
   ansible.builtin.copy:
-    src: lighttpd/modules.conf
-    dest: /etc/lighttpd/modules.conf
+    src: "lighttpd/modules.conf"
+    dest: "/etc/lighttpd/modules.conf"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - rutorrent
 
 - name: RUTORRENT | 4.13 Copy the configuration for auth module
   ansible.builtin.template:
-    src: lighttpd/auth.conf.j2
-    dest: /etc/lighttpd/conf.d/auth.conf
+    src: "lighttpd/auth.conf.j2"
+    dest: "/etc/lighttpd/conf.d/auth.conf"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - rutorrent
 
 - name: RUTORRENT | 4.14 Copy the configuration for fastcgi module
   ansible.builtin.copy:
-    src: lighttpd/fastcgi.conf
-    dest: /etc/lighttpd/conf.d/fastcgi.conf
+    src: "lighttpd/fastcgi.conf"
+    dest: "/etc/lighttpd/conf.d/fastcgi.conf"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - rutorrent
@@ -167,12 +175,12 @@
 - name: RUTORRENT | 4.15 Add a user to a htpasswd file and ensure \
         permissions are set
   community.general.htpasswd:
-    path: /var/www/ruTorrent/.htpasswd
+    path: "/var/www/ruTorrent/.htpasswd"
     name: "{{ ansible_user }}"
     password: "{{ htpasswd }}"
-    owner: root
-    group: lighttpd
-    mode: 0640
+    owner: "root"
+    group: "lighttpd"
+    mode: "0640"
   become: true
   tags:
     - rutorrent
@@ -182,10 +190,10 @@
   args:
     chdir: "/etc/lighttpd/"
   loop:
-    - lighttpd.conf
-    - modules.conf
-    - conf.d/auth.conf
-    - conf.d/fastcgi.conf
+    - "lighttpd.conf"
+    - "modules.conf"
+    - "conf.d/auth.conf"
+    - "conf.d/fastcgi.conf"
   register: command_result
   failed_when: command_result.rc != 0
   tags:

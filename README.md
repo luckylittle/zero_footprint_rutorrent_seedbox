@@ -1,5 +1,5 @@
-ansible-role-zero-footprint-ruT-seedbox
-=======================================
+luckylittle.zero_footprint_rutorrent_seedbox
+============================================
 
 Configures vanilla RHEL8/9 system to be lightweight and bulletproof seedbox running rTorrent and ruTorrent. It aims to be secure (SELinux, SSL, Fail2Ban enabled) and creates very few logs (zero footprint). It also provides modern autodownloading capabilities.
 
@@ -37,10 +37,10 @@ the ratio defaults should be sufficient (between 400%-500%).
 Dependencies
 ------------
 
-- Ansible core v2.14.17
-- community.general:10.4.0 (`ansible-galaxy collection install community.general`)
-- community.crypto:2.25.0 (`ansible-galaxy collection install community.crypto`)
-- ansible.posix:2.0.0 (`ansible-galaxy collection install ansible.posix`)
+- Ansible core v2.16.14
+- community.general v10.4.0 (`ansible-galaxy collection install community.general`)
+- community.crypto v2.25.0 (`ansible-galaxy collection install community.crypto`)
+- ansible.posix v2.0.0 (`ansible-galaxy collection install ansible.posix`)
 
 Example Playbook
 ----------------
@@ -59,7 +59,7 @@ Example Playbook
 - hosts: seedbox
   remote_user: redhat
   roles:
-    - ansible-role-zero-footprint-ruT-seedbox
+    - luckylittle.zero_footprint_rutorrent_seedbox
 ```
 
 Testing
@@ -287,7 +287,7 @@ MIT
 Ansible Galaxy
 --------------
 
-[luckylittle.ansible_role_zero_footprint_rut_seedbox](https://galaxy.ansible.com/ui/standalone/roles/luckylittle/ansible_role_zero_footprint_rut_seedbox/)
+[luckylittle.ansible_role_zero_footprint_rut_seedbox](https://galaxy.ansible.com/ui/standalone/roles/luckylittle/zero_footprint_rutorrent_seedbox/)
 
 Author Information
 ------------------
