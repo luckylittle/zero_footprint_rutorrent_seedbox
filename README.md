@@ -17,7 +17,7 @@ Role Variables
 * `set_google_dns` - if `true`, it will add Google DNS servers to the primary interface. Defaults to false.
 * `create_new_user` - whether you want to also create another user. Defaults to false.
 * `autobrr_version` and `autobrr_port` - contains the latest [autobrr](https://github.com/autobrr/autobrr) version and a standard port 7474.
-* `epel_dl` - URL of the [EPEL](https://docs.fedoraproject.org/en-US/epel/) RPM. Default to the RHEL9 EPEL.
+* `epel_dl` - URL of the [EPEL](https://docs.fedoraproject.org/en-US/epel/) RPM. Defaults to the RHEL9 EPEL.
 * `libtorrent_dl` - URL of the [libtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
 * `rtorrent_dl` - URL of the [rtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
 * `rtorrent_port` - what port should rtorrent listen on. Default is 55442.
@@ -67,7 +67,7 @@ Testing
 
 On a brand new RHEL8.6, 1x vCPU, 4GB RAM playbook took 18m 32s to finish on VirtualBox.
 On a brand new Red Hat Enterprise Linux release 9.5 (Plow) on AWS (t3.medium), it took 18m 29s.
-The following versions were installed during the test:
+The following versions were installed during the RHEL9 test:
 
 |package name|package version      |
 |------------|---------------------|
