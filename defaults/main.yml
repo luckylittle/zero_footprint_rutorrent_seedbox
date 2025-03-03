@@ -35,7 +35,7 @@ htpasswd: !vault |
 # The value is `r3dh4t`, password to decrypt is `password1`
 
 # 05-security
-fail2ban_ignore_ipv4: '125.253.17.211'
+fail2ban_ignore_ipv4: '123.124.125.126'
 
 # 07-reboot
 require_reboot: true

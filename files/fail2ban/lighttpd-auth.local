@@ -1,3 +1,4 @@
+# Managed by Ansible
 [lighttpd-auth]
 enabled = true
 backend = systemd

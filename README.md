@@ -1,7 +1,7 @@
 ansible-role-zero-footprint-ruT-seedbox
 =======================================
 
-Configures vanilla RHEL8/9 system to be lightweight and bulletproof seedbox running rTorrent and ruTorrent. It aims to be secure (SELinux, SSL, Fail2Ban enabled) and creates very few logs (zero footprint).
+Configures vanilla RHEL8/9 system to be lightweight and bulletproof seedbox running rTorrent and ruTorrent. It aims to be secure (SELinux, SSL, Fail2Ban enabled) and creates very few logs (zero footprint). It also provides modern autodownloading capabilities.
 
 Requirements
 ------------

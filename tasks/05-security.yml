@@ -1,5 +1,5 @@
 ---
-# tasks file for ansible-role-zero-footprint-ruT-seedbox
+# tasks file for ansible-role-zero-footprint-ruT-seedbox/05-security
 - name: SECURITY | 5.1 Install packages
   ansible.builtin.dnf:
     name: "{{ item }}"

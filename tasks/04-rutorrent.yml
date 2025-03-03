@@ -1,5 +1,5 @@
 ---
-# tasks file for ansible-role-zero-footprint-ruT-seedbox
+# tasks file for ansible-role-zero-footprint-ruT-seedbox/04-rutorrent
 - name: RUTORRENT | 4.1 Install required packages
   ansible.builtin.dnf:
     name: "{{ item }}"
