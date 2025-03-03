@@ -1,13 +1,13 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox
 
-- name: REBOOT | Enable required services, part 1
+- name: REBOOT | 7.1 Set Autobrr service as fact
   ansible.builtin.set_fact:
     autobrr_service: "autobrr@{{ ansible_user }}"
   tags:
     - reboot
 
-- name: REBOOT | Enable required services, part 2
+- name: REBOOT | 7.2 Enable all required services
   ansible.builtin.systemd:
     state: stopped
     enabled: true
@@ -24,7 +24,7 @@
   tags:
     - reboot
 
-- name: REBOOT | Reboot a machine
+- name: REBOOT | 7.3 Reboot a machine
   ansible.builtin.reboot:
     reboot_timeout: 1200
   become: true
@@ -32,7 +32,7 @@
   tags:
     - reboot
 
-- name: REBOOT | Empty audit.log after the reboot (cannot be done before that)
+- name: REBOOT | 7.4 Empty audit.log after the reboot (cannot be done before that)
   community.general.filesize:
     path: "/var/log/audit/audit.log"
     size: 0B

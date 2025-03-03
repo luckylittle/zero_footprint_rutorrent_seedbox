@@ -1,4 +1,0 @@
-[lighttpd-auth]
-enabled=true
-backend = systemd
-logpath = journal

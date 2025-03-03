@@ -5,3 +5,5 @@ files/vsftpd/users.txt
 .terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.backup
+tests/ansible-zero-footprint-ruT-seedbox
+password.txt

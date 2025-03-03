@@ -1,4 +1,5 @@
 [vsftpd]
-enabled=true
+enabled = true
 backend = systemd
-logpath = journal
+filter = vsftpd
+journalmatch = _SYSTEMD_UNIT=vsftpd.service + _COMM=vsftpd

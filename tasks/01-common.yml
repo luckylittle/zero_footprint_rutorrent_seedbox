@@ -1,6 +1,6 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox
-- name: COMMON | Upgrade all existing packages
+- name: COMMON | 1.1 Upgrade all existing packages
   ansible.builtin.dnf:
     name: "*"
     state: latest
@@ -8,14 +8,14 @@
   tags:
     - common
 
-- name: COMMON | Set timezone
+- name: COMMON | 1.2 Set timezone
   community.general.timezone:
     name: "{{ set_timezone }}"
   become: true
   tags:
     - common
 
-- name: COMMON | Add two IPv4 Google DNS servers
+- name: COMMON | 1.3 Add two IPv4 Google DNS servers (Optional)
   community.general.nmcli:
     conn_name: "{{ ansible_default_ipv4.alias }}"
     type: ethernet
@@ -28,7 +28,7 @@
   tags:
     - common
 
-- name: COMMON | Add the user with a specific uid and a primary group of 'wheel'
+- name: COMMON | 1.4 Add the user with a specific uid and a primary group of 'wheel' (Optional)
   ansible.builtin.user:
     name: "{{ new_user }}"
     comment: "{{ new_user }}"
@@ -38,7 +38,7 @@
   tags:
     - common
 
-- name: COMMON | Create a directory structure
+- name: COMMON | 1.5 Create a directory structure
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: directory
@@ -68,14 +68,14 @@
   tags:
     - common
 
-- name: COMMON | Change home folder permissions
+- name: COMMON | 1.6 Change home folder permissions
   ansible.builtin.file:
     path: /home/{{ ansible_user }}
     mode: 0711
   tags:
     - common
 
-- name: COMMON | Remove unnecessary messages of the day
+- name: COMMON | 1.7 Remove unnecessary messages of the day
   ansible.builtin.file:
     path: "/etc/motd.d/{{ item }}"
     state: absent
@@ -86,7 +86,7 @@
   tags:
     - common
 
-- name: COMMON | Add cleanup cron for Torrent files
+- name: COMMON | 1.8 Add cleanup cron for Torrent files
   ansible.builtin.cron:
     name: "Remove *.torrent files older than 120 days every 1st day of the month (at 12:00AM)"
     day: "1"
@@ -97,7 +97,7 @@
   tags:
     - common
 
-- name: COMMON | Add cleanup cron for the Torrent data
+- name: COMMON | 1.9 Add cleanup cron for the Torrent data
   ansible.builtin.cron:
     name: "Remove site sub-folders older than 120 days every 1st day of the month (at 12:02AM)"
     day: "1"
@@ -107,7 +107,7 @@
   tags:
     - common
 
-- name: COMMON | Add useful alias rt
+- name: COMMON | 1.10 Add useful alias rt
   ansible.builtin.lineinfile:
     path: "~/.bashrc"
     line: "alias rt=\"tmux a\""
@@ -115,7 +115,7 @@
   tags:
     - common
 
-- name: COMMON | Autobrr service, part 1
+- name: COMMON | 1.11 Add Autobrr service
   ansible.builtin.template:
     src: autobrr/autobrr.service.j2
     dest: /etc/systemd/system/autobrr@.service
@@ -124,33 +124,33 @@
   tags:
     - common
 
-- name: COMMON | Autobrr service, part 2
+- name: COMMON | 1.12 Reload systemd after installing Autobrr service
   ansible.builtin.command: "systemctl daemon-reload"
   become: true
   tags:
     - common
 
-- name: COMMON | Autobrr config directory
+- name: COMMON | 1.13 Add Autobrr config directory
   ansible.builtin.file:
     path: /home/{{ ansible_user }}/.config/autobrr/
     state: directory
   tags:
     - common
 
-- name: COMMON | Autobrr configuration, part 1
+- name: COMMON | 1.14 Generate session secret for Autobrr
   ansible.builtin.shell: "head /dev/urandom | tr -dc A-Za-z0-9 | head -c32"
   register: session_secret
   tags:
     - common
 
-- name: COMMON | Autobrr configuration, part 2
+- name: COMMON | 1.15 Add Autobrr configuration file
   ansible.builtin.template:
     src: autobrr/config.toml.j2
     dest: /home/{{ ansible_user }}/.config/autobrr/config.toml
   tags:
     - common
 
-- name: COMMON | Unarchive Autobrr
+- name: COMMON | 1.16 Unarchive Autobrr
   ansible.builtin.unarchive:
     src: https://github.com/autobrr/autobrr/releases/download/v{{ autobrr_version }}/autobrr_{{ autobrr_version }}_linux_x86_64.tar.gz
     dest: /home/{{ ansible_user }}
@@ -158,19 +158,19 @@
   tags:
     - common
 
-- name: COMMON | Install Autobrr
+- name: COMMON | 1.17 Install Autobrr binaries
   ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/{{ ansible_user }}/autobrrctl /usr/local/bin/"
   become: true
   tags:
     - common
 
-- name: COMMON | Install Autobrr
+- name: COMMON | 1.18 Restore Autobrr files default SELinux security contexts
   ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
   become: true
   tags:
     - common
 
-- name: COMMON | Autobrr backup script
+- name: COMMON | 1.19 Add Autobrr backup & upgrade shell script
   ansible.builtin.template:
     src: autobrr/upgrade_autobrr.sh.j2
     dest: /home/{{ ansible_user }}/upgrade_autobrr.sh

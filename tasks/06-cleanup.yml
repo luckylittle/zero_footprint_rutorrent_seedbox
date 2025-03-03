@@ -1,11 +1,12 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox
-- name: CLEANUP | Remove unnecessary packages
+- name: CLEANUP | 6.1 Remove unnecessary packages
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: absent
   become: true
   loop:
+    - audit
     - cockpit
     - gcc
     - gcc-c++
@@ -17,11 +18,12 @@
     - policycoreutils-devel
     - python3-cryptography
     - python3-passlib
+    - rsyslog
     - zlib-devel
   tags:
     - cleanup
 
-- name: CLEANUP | Remove unnecessary source files
+- name: CLEANUP | 6.2 Remove unnecessary source files
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: absent
@@ -32,7 +34,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Remove unnecessary SELinux files
+- name: CLEANUP | 6.3 Remove unnecessary SELinux files
   ansible.builtin.file:
     path: "/tmp/{{ item }}"
     state: absent
@@ -48,14 +50,14 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Remove unnecessary .github folder from ruTorrent
+- name: CLEANUP | 6.4 Remove unnecessary .github folder from ruTorrent
   ansible.builtin.file:
     path: "/var/www/ruTorrent/.github"
     state: absent
   tags:
     - cleanup
 
-- name: CLEANUP | Remove unnecessary Autobrr files
+- name: CLEANUP | 6.5 Remove unnecessary Autobrr files
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: absent
@@ -66,24 +68,13 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Clean DNF cache
+- name: CLEANUP | 6.6 Clean DNF cache
   ansible.builtin.command: "dnf clean all"
   become: true
   tags:
     - cleanup
 
-- name: CLEANUP | Disable rsyslog & auditd
-  ansible.builtin.systemd:
-    enabled: false
-    name: "{{ item }}"
-  become: true
-  loop:
-    - rsyslog
-    - auditd
-  tags:
-    - cleanup
-
-- name: CLEANUP | Change journald storage to RAM
+- name: CLEANUP | 6.7 Change journald storage to RAM
   ansible.builtin.lineinfile:
     path: /etc/systemd/journald.conf
     regexp: '^#Storage=.*'
@@ -94,7 +85,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Ensure rhsm logging is disabled
+- name: CLEANUP | 6.8 Ensure rhsm logging is disabled
   community.general.ini_file:
     path: /etc/rhsm/rhsm.conf
     section: rhsmcertd
@@ -105,7 +96,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Ensure rhsm logging is only ERROR
+- name: CLEANUP | 6.9 Ensure rhsm logging is only ERROR
   community.general.ini_file:
     path: /etc/rhsm/rhsm.conf
     section: logging
@@ -115,7 +106,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Disable DNF logging
+- name: CLEANUP | 6.10 Disable DNF logging
   ansible.builtin.lineinfile:
     path: "/etc/dnf/dnf.conf"
     line: "logfilelevel=0"
@@ -125,7 +116,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise general logrotate to daily
+- name: CLEANUP | 6.11 Minimise general logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.conf
     regexp: '^weekly$'
@@ -135,7 +126,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise general logrotate to 1
+- name: CLEANUP | 6.12 Minimise general logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.conf
     regexp: '^rotate 4$'
@@ -144,14 +135,14 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Check if bootlog logrotate config exists
+- name: CLEANUP | 6.13 Check if bootlog logrotate config exists
   ansible.builtin.stat:
     path: /etc/logrotate.d/bootlog
   register: bootlog_file
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise bootlog logrotate to 1
+- name: CLEANUP | 6.14 Minimise bootlog logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/bootlog
     regexp: '^    rotate 7$'
@@ -161,7 +152,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise btmp logrotate to daily
+- name: CLEANUP | 6.15 Minimise btmp logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/btmp
     regexp: '^    monthly$'
@@ -170,7 +161,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise dnf logrotate to daily
+- name: CLEANUP | 6.16 Minimise dnf logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/dnf
     regexp: '^    weekly$'
@@ -179,7 +170,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise dnf logrotate to 1
+- name: CLEANUP | 6.17 Minimise dnf logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/dnf
     regexp: '^    rotate 4$'
@@ -188,7 +179,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise firewalld logrotate to daily
+- name: CLEANUP | 6.18 Minimise firewalld logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/firewalld
     regexp: '^    weekly$'
@@ -197,7 +188,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise firewalld logrotate to 1
+- name: CLEANUP | 6.19 Minimise firewalld logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/firewalld
     regexp: '^    rotate 4$'
@@ -206,14 +197,14 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Check if iscsiuiolog logrotate config exists
+- name: CLEANUP | 6.20 Check if iscsiuiolog logrotate config exists
   ansible.builtin.stat:
     path: /etc/logrotate.d/iscsiuiolog
   register: iscsiuiolog_file
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise iscsiuiolog logrotate to daily
+- name: CLEANUP | 6.21 Minimise iscsiuiolog logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/iscsiuiolog
     regexp: '^    weekly$'
@@ -223,7 +214,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise iscsiuiolog logrotate to 1
+- name: CLEANUP | 6.22 Minimise iscsiuiolog logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/iscsiuiolog
     regexp: '^    rotate 4$'
@@ -233,14 +224,14 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Check if psacct logrotate config exists
+- name: CLEANUP | 6.23 Check if psacct logrotate config exists
   ansible.builtin.stat:
     path: /etc/logrotate.d/psacct
   register: psacct_file
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise psacct logrotate to 1
+- name: CLEANUP | 6.24 Minimise psacct logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/psacct
     regexp: '^    rotate 31$'
@@ -250,14 +241,14 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Check if psacct logrotate config exists
+- name: CLEANUP | 6.25 Check if psacct logrotate config exists
   ansible.builtin.stat:
     path: /etc/logrotate.d/samba
   register: samba_file
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise samba logrotate to 1
+- name: CLEANUP | 6.26 Minimise samba logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/samba
     regexp: '^    rotate 99$'
@@ -267,7 +258,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise sssd logrotate to daily
+- name: CLEANUP | 6.27 Minimise sssd logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/sssd
     regexp: '^    weekly$'
@@ -276,7 +267,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise sssd logrotate to 1
+- name: CLEANUP | 6.28 Minimise sssd logrotate to 1
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/sssd
     regexp: '^    rotate 2$'
@@ -285,7 +276,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Minimise wtmp logrotate to daily
+- name: CLEANUP | 6.29 Minimise wtmp logrotate to daily
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/wtmp
     regexp: '^    monthly$'
@@ -294,7 +285,7 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Find all logs in /var/log
+- name: CLEANUP | 6.30 Find all logs in /var/log
   ansible.builtin.find:
     paths: /var/log
     recurse: true
@@ -304,23 +295,38 @@
   tags:
     - cleanup
 
-- name: CLEANUP | Empty all var_log_files
-  community.general.filesize:
+- name: CLEANUP | 6.31 Remove all var_log_files
+  ansible.builtin.file:
     path: "{{ item.path }}"
-    size: 0B
+    state: absent
   become: true
   loop: "{{ var_log_files.files }}"
   tags:
     - cleanup
 
-- name: CLEANUP | Change attributes of btmp, lastlog, wtmp logs
+- name: CLEANUP | 6.32 Create a symbolic link pointing to /dev/null for all remaining logs
   ansible.builtin.file:
-    path: "/var/log/{{ item }}"
-    attributes: '+i'
+    src: /dev/null
+    dest: "{{ item }}"
+    state: link
   become: true
   loop:
-    - btmp
-    - lastlog
-    - wtmp
+    - /var/log/btmp
+    - /var/log/dnf.librepo.log
+    - /var/log/dnf.log
+    - /var/log/dnf.rpm.log
+    - /var/log/firewalld
+    - /var/log/hawkey.log
+    - /var/log/lastlog
+    - /var/log/rhsm/rhsm.log
+    - /var/log/tallylog
+    - /var/log/tuned/tuned.log
+    - /var/log/wtmp
+  tags:
+    - cleanup
+
+- name: CLEANUP | 6.33 Remove all remaining packages that are not being used
+  ansible.builtin.command: "dnf autoremove -y"
+  become: true
   tags:
     - cleanup

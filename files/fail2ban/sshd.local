@@ -1,4 +1,4 @@
 [sshd]
-enabled=true
+enabled = true
 backend = systemd
 logpath = journal
