@@ -5,6 +5,8 @@ galaxy_info:
     Configures vanilla RHEL system to be lightweight and secure seedbox running
     rTorrent and ruTorrent. It has modern autodownloading capability as well.
   company: Red Hat
+  role_name: ansible_role_zero_footprint_rut_seedbox
+  namespace: luckylittle
 
   license: MIT
 

@@ -284,6 +284,11 @@ License
 
 MIT
 
+Ansible Galaxy
+--------------
+
+[luckylittle.ansible_role_zero_footprint_rut_seedbox](https://galaxy.ansible.com/ui/standalone/roles/luckylittle/ansible_role_zero_footprint_rut_seedbox/)
+
 Author Information
 ------------------
 
