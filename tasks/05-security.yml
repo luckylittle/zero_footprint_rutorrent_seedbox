@@ -32,7 +32,8 @@
     - security
 
 - name: SECURITY | 5.4 Compile the SELinux modules
-  ansible.builtin.command: "make -f /usr/share/selinux/devel/Makefile {{ item | split(\".\") | first }}.pp"
+  ansible.builtin.command: "make -f /usr/share/selinux/devel/Makefile\
+                           {{ item | split(\".\") | first }}.pp"
   args:
     chdir: "/tmp"
   loop:
@@ -74,7 +75,8 @@
   tags:
     - security
 
-- name: SECURITY | 5.8 Permit traffic in default zone for various rtorrent, vsftpd, autobrr ports
+- name: SECURITY | 5.8 Permit traffic in default zone for various rtorrent, \
+        vsftpd, autobrr ports
   ansible.posix.firewalld:
     port: "{{ item }}"
     permanent: true
@@ -151,7 +153,8 @@
   ansible.builtin.lineinfile:
     path: /etc/fail2ban/jail.conf
     regexp: '^#ignoreip = 127.0.0.1/8 ::1$'
-    line: "ignoreip = 127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 172.16.0.0/12 {{ fail2ban_ignore_ipv4 }}"
+    line: "ignoreip = 127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 \
+          172.16.0.0/12 {{ fail2ban_ignore_ipv4 }}"
     backup: true
   become: true
   tags:

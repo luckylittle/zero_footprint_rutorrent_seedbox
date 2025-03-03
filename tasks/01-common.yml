@@ -28,7 +28,8 @@
   tags:
     - common
 
-- name: COMMON | 1.4 Add the user with a specific uid and a primary group of 'wheel' (Optional)
+- name: COMMON | 1.4 Add the user with a specific uid and a primary \
+        group of 'wheel' (Optional)
   ansible.builtin.user:
     name: "{{ new_user }}"
     comment: "{{ new_user }}"
@@ -88,22 +89,26 @@
 
 - name: COMMON | 1.8 Add cleanup cron for Torrent files
   ansible.builtin.cron:
-    name: "Remove *.torrent files older than 120 days every 1st day of the month (at 12:00AM)"
+    name: "Remove *.torrent files older than 120 days every 1st \
+          day of the month (at 12:00AM)"
     day: "1"
     minute: "0"
     hour: "0"
-    job: "find /home/{{ ansible_user }}/site/.Watch*/*.torrent -type f -ctime +120 -delete"
+    job: "find /home/{{ ansible_user }}/site/.Watch*/*.torrent \
+          -type f -ctime +120 -delete"
     backup: true
   tags:
     - common
 
 - name: COMMON | 1.9 Add cleanup cron for the Torrent data
   ansible.builtin.cron:
-    name: "Remove site sub-folders older than 120 days every 1st day of the month (at 12:02AM)"
+    name: "Remove site sub-folders older than 120 days every 1st \
+          day of the month (at 12:02AM)"
     day: "1"
     minute: "2"
     hour: "0"
-    job: "find /home/{{ ansible_user }}/site/ -maxdepth 2 -mindepth 2 -type d -ctime +120 -exec rm -rf \"{}\" +"
+    job: "find /home/{{ ansible_user }}/site/ -maxdepth 2 -mindepth \
+          2 -type d -ctime +120 -exec rm -rf \"{}\" +"
   tags:
     - common
 
@@ -152,14 +157,17 @@
 
 - name: COMMON | 1.16 Unarchive Autobrr
   ansible.builtin.unarchive:
-    src: https://github.com/autobrr/autobrr/releases/download/v{{ autobrr_version }}/autobrr_{{ autobrr_version }}_linux_x86_64.tar.gz
+    src: https://github.com/autobrr/autobrr/releases/download/\
+          v{{ autobrr_version }}/autobrr_{{ autobrr_version }}_\
+          linux_x86_64.tar.gz
     dest: /home/{{ ansible_user }}
-    remote_src: yes
+    remote_src: true
   tags:
     - common
 
 - name: COMMON | 1.17 Install Autobrr binaries
-  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/{{ ansible_user }}/autobrrctl /usr/local/bin/"
+  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/\
+                            {{ ansible_user }}/autobrrctl /usr/local/bin/"
   become: true
   tags:
     - common

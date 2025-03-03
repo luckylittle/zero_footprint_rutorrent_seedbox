@@ -40,7 +40,8 @@
   tags:
     - vsftpd
 
-- name: VSFTPD | 3.6 Generate an OpenSSL Certificate Signing Request with Subject information
+- name: VSFTPD | 3.6 Generate an OpenSSL Certificate \
+        Signing Request with Subject information
   community.crypto.openssl_csr:
     path: /etc/ssl/private/vsftpd.csr
     privatekey_path: /etc/ssl/private/vsftpd.key
@@ -81,8 +82,10 @@
         src: vsftpd/users.txt
         dest: "~"
 
-    - name: VSFTPD | 3.9.2 Get only the users from users.txt, except for ansible_user
-      ansible.builtin.shell: "awk '{if(NR%2!=0)print}' ~/users.txt | grep -v {{ ansible_user }}"
+    - name: VSFTPD | 3.9.2 Get only the users from \
+            users.txt, except for ansible_user
+      ansible.builtin.shell: "awk '{if(NR%2!=0)print}' ~/users.txt \
+                              | grep -v {{ ansible_user }}"
       become: true
       register: vsftpd_additional_users
 
@@ -97,7 +100,8 @@
       loop: "{{ vsftpd_additional_users.stdout | split('\n') }}"
 
     - name: VSFTPD | 3.9.4 Generate login database
-      ansible.builtin.command: db_load -T -t hash -f ~/users.txt /etc/vsftpd/login.db
+      ansible.builtin.command: db_load -T -t hash -f \
+                                /users.txt /etc/vsftpd/login.db
 
     - name: VSFTPD | 3.9.5 Remove unnecessary file
       ansible.builtin.file:

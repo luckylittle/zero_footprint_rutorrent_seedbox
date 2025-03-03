@@ -10,9 +10,12 @@ autobrr_version: '1.58.0'
 autobrr_port: 7474
 
 # 02-rtorrent
-epel_dl: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm"
-libtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.1/libtorrent-0.15.1.tar.gz"
-rtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/v0.15.1/rtorrent-0.15.1.tar.gz"
+epel_dl: "https://dl.fedoraproject.org/pub/epel/\
+          epel-release-latest-9.noarch.rpm"
+libtorrent_dl: "https://github.com/rakshasa/rtorrent/\
+                releases/download/v0.15.1/libtorrent-0.15.1.tar.gz"
+rtorrent_dl: "https://github.com/rakshasa/rtorrent/releases/download/\
+              v0.15.1/rtorrent-0.15.1.tar.gz"
 rtorrent_port: 55442
 rt_memory_max_set: "{{ ((ansible_memtotal_mb * 3) / 4) | round | int }}M"
 
@@ -22,7 +25,8 @@ pasv_port_range: 64000-64321
 single_user: false
 
 # 04-rutorrent
-rutorrent_dl: "https://github.com/Novik/ruTorrent/archive/refs/tags/v5.1.5.tar.gz"
+rutorrent_dl: "https://github.com/Novik/ruTorrent/archive/\
+              refs/tags/v5.1.5.tar.gz"
 https_port: 443
 htpasswd: !vault |
   $ANSIBLE_VAULT;1.1;AES256
@@ -31,8 +35,8 @@ htpasswd: !vault |
   66336562613766346562316132353662346535363364613434323631303165376531373865376636
   3364363065613636370a663231333035383966383938313037313531356163316330633036303665
   6239
-# ^^ An example of the encrypted variable with `ansible-vault encrypt_string` command
-# The value is `r3dh4t`, password to decrypt is `password1`
+# ^^ An example of the encrypted variable with `ansible-vault encrypt_string`
+# command. The value is `r3dh4t`, password to decrypt is `password1`.
 
 # 05-security
 fail2ban_ignore_ipv4: '123.124.125.126'
