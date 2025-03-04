@@ -38,7 +38,7 @@
                            {{ item | split(\".\") | first }}.pp"
   args:
     chdir: "/tmp"
-    creates: "/tmp/rutorrent.pp"
+  changed_when: true
   loop:
     - "rutorrent.te"
     - "tmux.te"

@@ -114,7 +114,7 @@
 
     - name: VSFTPD | 3.9.4 Generate login database
       ansible.builtin.command: db_load -T -t hash -f \
-                                /users.txt /etc/vsftpd/login.db
+                                ~/users.txt /etc/vsftpd/login.db
       args:
         creates: "/etc/vsftpd/login.db"
 

@@ -6,7 +6,7 @@ set_timezone: "Europe/Prague"
 set_google_dns: false
 create_new_user: false
 new_user: "redhat"
-autobrr_version: "1.58.0"
+autobrr_version: "1.59.0"
 autobrr_port: 7474
 
 # 02-rtorrent
