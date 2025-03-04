@@ -1,4 +1,4 @@
-var.log_root = "/var/log/lighttpd"
+# {{ ansible_managed }}
 var.server_root = "/var/www/ruTorrent"
 var.state_dir = "/run/lighttpd"
 var.home_dir = "/var/lib/lighttpd"
@@ -12,8 +12,8 @@ server.username = "lighttpd"
 server.groupname = "lighttpd"
 server.document-root = server_root
 server.pid-file = state_dir + "/lighttpd.pid"
-server.errorlog = log_root + "/error.log"
-include "conf.d/access_log.conf"
+server.errorlog-use-syslog = "enable"
+accesslog.use-syslog = "enable"
 include "conf.d/debug.conf"
 server.event-handler = "linux-sysepoll"
 server.network-backend = "sendfile"

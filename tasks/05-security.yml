@@ -1,152 +1,206 @@
 ---
-# tasks file for ansible-role-zero-footprint-ruT-seedbox
-- name: SECURITY | Install packages
+# tasks file for ansible-role-zero-footprint-ruT-seedbox/05-security
+
+- name: SECURITY | 5.1 Install packages
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
   become: true
   loop:
-    - fail2ban
-    - policycoreutils-devel
+    - "firewalld"
+    - "fail2ban"
+    - "policycoreutils-devel"
   tags:
     - security
 
-- name: SECURITY | Ensure SELinux is set to enforcing mode
+- name: SECURITY | 5.2 Ensure SELinux is set to enforcing mode
   ansible.builtin.lineinfile:
-    path: /etc/selinux/config
+    path: "/etc/selinux/config"
     regexp: '^SELINUX='
-    line: SELINUX=enforcing
+    line: "SELINUX=enforcing"
   become: true
   tags:
     - security
 
-- name: SECURITY | Copy the SELinux modules
+- name: SECURITY | 5.3 Copy the SELinux modules (for ruTorrent & tmux)
   ansible.builtin.copy:
-    src: selinux/{{ item }}
-    dest: /tmp/{{ item }}
+    src: "selinux/{{ item }}"
+    dest: "/tmp/{{ item }}"
+    mode: "0644"
   loop:
-    - rutorrent.te
-    - tmux.te
+    - "rutorrent.te"
+    - "tmux.te"
   tags:
     - security
 
-- name: SECURITY | Compile the SELinux modules
-  ansible.builtin.command: "make -f /usr/share/selinux/devel/Makefile {{ item | split(\".\") | first }}.pp"
+- name: SECURITY | 5.4 Compile the SELinux modules
+  ansible.builtin.command: "make -f /usr/share/selinux/devel/Makefile \
+                           {{ item | split(\".\") | first }}.pp"
   args:
     chdir: "/tmp"
+  changed_when: true
   loop:
-    - rutorrent.te
-    - tmux.te
+    - "rutorrent.te"
+    - "tmux.te"
   tags:
     - security
 
-- name: SECURITY | Install the SELinux modules
+- name: SECURITY | 5.5 Install the SELinux modules
   ansible.builtin.command: "semodule -i {{ item }}"
   args:
     chdir: "/tmp"
+  changed_when: true
   become: true
   loop:
-    - rutorrent.pp
-    - tmux.pp
+    - "rutorrent.pp"
+    - "tmux.pp"
   tags:
     - security
 
-- name: SECURITY | Permit traffic in default zone for HTTPS service
-  ansible.posix.firewalld:
-    service: "https"
-    permanent: true
-    immediate: true
-    state: enabled
+- name: SECURITY | 5.6 Start service firewalld
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+    enabled: true
   become: true
   tags:
     - security
 
-- name: SECURITY | Permit traffic in default zone for various ports
+- name: SECURITY | 5.7 Permit traffic in default zone for https, ssh services
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: "enabled"
+  become: true
+  loop:
+    - ssh
+    - https
+  tags:
+    - security
+
+- name: SECURITY | 5.8 Permit traffic in default zone for various rtorrent, \
+        vsftpd, autobrr ports
   ansible.posix.firewalld:
     port: "{{ item }}"
     permanent: true
     immediate: true
-    state: enabled
+    state: "enabled"
   become: true
   loop:
     - "{{ rtorrent_port }}/tcp"
     - "{{ rtorrent_port }}/udp"
-    - "55443/tcp"
+    - "{{ ftp_port }}/tcp"
     - "{{ pasv_port_range }}/tcp"
     - "7474/tcp"
   tags:
     - security
 
-- name: SECURITY | Deny traffic in default zone for cockpit
+- name: SECURITY | 5.9 Deny traffic in default zone for cockpit
   ansible.posix.firewalld:
     service: "cockpit"
     permanent: true
     immediate: true
-    state: disabled
+    state: "disabled"
   become: true
   notify:
     - "Reload firewalld"
   tags:
     - security
 
-- name: SECURITY | Template the configuration for SSHD
+- name: SECURITY | 5.10 Template the configuration for SSHD
   ansible.builtin.template:
-    src: sshd/sshd_config.j2
-    dest: /etc/ssh/sshd_config
+    src: "sshd/sshd_config.j2"
+    dest: "/etc/ssh/sshd_config"
     backup: true
+    mode: "0600"
   become: true
   tags:
     - security
 
-- name: SECURITY | Copy the configuration for Fail2Ban (jail)
+- name: SECURITY | 5.11 Copy the configuration for Fail2Ban (jail)
   ansible.builtin.copy:
-    src: fail2ban/jail.local
-    dest: /etc/fail2ban/jail.local
+    src: "fail2ban/jail.local"
+    dest: "/etc/fail2ban/jail.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
-- name: SECURITY | Copy the configuration for Fail2Ban (lighttpd)
+- name: SECURITY | 5.12 Copy the configuration for Fail2Ban (lighttpd)
   ansible.builtin.copy:
-    src: fail2ban/lighttpd.local
-    dest: /etc/fail2ban/jail.d/lighttpd.local
+    src: "fail2ban/lighttpd-auth.local"
+    dest: "/etc/fail2ban/jail.d/lighttpd-auth.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
-- name: SECURITY | Copy the configuration for Fail2Ban (sshd)
+- name: SECURITY | 5.13 Copy the configuration for Fail2Ban (sshd)
   ansible.builtin.copy:
-    src: fail2ban/sshd.local
-    dest: /etc/fail2ban/jail.d/sshd.local
+    src: "fail2ban/sshd.local"
+    dest: "/etc/fail2ban/jail.d/sshd.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
-- name: SECURITY | Copy the configuration for Fail2Ban (vsftpd)
-  ansible.builtin.copy:
-    src: fail2ban/vsftpd.local
-    dest: /etc/fail2ban/jail.d/vsftpd.local
+- name: SECURITY | 5.14 Template the configuration for Fail2Ban (vsftpd)
+  ansible.builtin.template:
+    src: "fail2ban/vsftpd.local.j2"
+    dest: "/etc/fail2ban/jail.d/vsftpd.local"
     backup: true
+    mode: "0644"
   become: true
   tags:
     - security
 
-- name: SECURITY | Make exceptions for some IP addresses for Fail2Ban
+- name: SECURITY | 5.15 Make exceptions for some IP addresses for Fail2Ban
   ansible.builtin.lineinfile:
-    path: /etc/fail2ban/jail.conf
+    path: "/etc/fail2ban/jail.conf"
     regexp: '^#ignoreip = 127.0.0.1/8 ::1$'
-    line: "ignoreip = 127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 172.16.0.0/12 {{ fail2ban_ignore_ipv4 }}"
+    line: "ignoreip = 127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 \
+          172.16.0.0/12 {{ fail2ban_ignore_ipv4 }}"
     backup: true
   become: true
   tags:
     - security
 
-- name: SECURITY | Disable shell history
+- name: SECURITY | 5.16 Change logging of Fail2Ban to systemd
   ansible.builtin.lineinfile:
-    path: /etc/profile
+    path: "/etc/fail2ban/fail2ban.conf"
+    regexp: '^logtarget =.*'
+    line: "logtarget = SYSTEMD-JOURNAL"
+  become: true
+  tags:
+    - security
+
+- name: SECURITY | 5.17 Copy the filter for Fail2Ban (lighttpd-auth)
+  ansible.builtin.copy:
+    src: "fail2ban/lighttpd-auth.conf"
+    dest: "/etc/fail2ban/filter.d/lighttpd-auth.conf"
+    backup: true
+    mode: "0644"
+  become: true
+  tags:
+    - security
+
+- name: SECURITY | 5.18 Copy the filter for Fail2Ban (vsftpd)
+  ansible.builtin.copy:
+    src: "fail2ban/vsftpd.conf"
+    dest: "/etc/fail2ban/filter.d/vsftpd.conf"
+    backup: true
+    mode: "0644"
+  become: true
+  tags:
+    - security
+
+- name: SECURITY | 5.19 Disable shell history
+  ansible.builtin.lineinfile:
+    path: "/etc/profile"
     regexp: '^HISTSIZE=1000$'
     line: "HISTSIZE=0\nHISTFILE=/dev/null"
     backup: true

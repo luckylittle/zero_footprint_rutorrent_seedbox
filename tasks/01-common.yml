@@ -1,65 +1,86 @@
 ---
-# tasks file for ansible-role-zero-footprint-ruT-seedbox
-- name: COMMON | Set timezone
+# tasks file for ansible-role-zero-footprint-ruT-seedbox/01-common
+
+- name: COMMON | 1.1 Upgrade all existing packages
+  ansible.builtin.dnf:
+    name: "*"
+    state: "latest"  # noqa package-latest
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.2 Set timezone
   community.general.timezone:
     name: "{{ set_timezone }}"
   become: true
   tags:
     - common
 
-- name: COMMON | Add two IPv4 Google DNS servers
+- name: COMMON | 1.3 Add two IPv4 Google DNS servers (Optional)
   community.general.nmcli:
     conn_name: "{{ ansible_default_ipv4.alias }}"
-    type: ethernet
+    type: "ethernet"
     dns4:
       - 8.8.8.8
       - 8.8.4.4
-    state: present
+    state: "present"
   become: true
   when: set_google_dns
   tags:
     - common
 
-- name: COMMON | Create a directory structure
+- name: COMMON | 1.4 Add the user with a specific uid and a primary \
+        group of 'wheel' (Optional)
+  ansible.builtin.user:
+    name: "{{ new_user }}"
+    comment: "{{ new_user }}"
+    uid: 1000
+    group: "wheel"
+  when: create_new_user
+  tags:
+    - common
+
+- name: COMMON | 1.5 Create a directory structure
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
-    state: directory
+    state: "directory"
+    mode: "u=rwx,g=rwx,o=rwx"
   loop:
-    - .Session
-    - site
-    - site/.WatchAPPZ
-    - site/.WatchGAMES
-    - site/.WatchMISC
-    - site/.WatchMP3
-    - site/.WatchTV-HD
-    - site/.WatchTV-SD
-    - site/.WatchMOVIES-HD
-    - site/.WatchMOVIES-SD
-    - site/.WatchXXX
-    - site/APPZ
-    - site/GAMES
-    - site/MISC
-    - site/MP3
-    - site/TV-HD
-    - site/TV-SD
-    - site/MOVIES-HD
-    - site/MOVIES-SD
-    - site/XXX
-    - site/UPLOAD
+    - ".Session"
+    - "site"
+    - "site/.WatchAPPZ"
+    - "site/.WatchGAMES"
+    - "site/.WatchMISC"
+    - "site/.WatchMP3"
+    - "site/.WatchTV-HD"
+    - "site/.WatchTV-SD"
+    - "site/.WatchMOVIES-HD"
+    - "site/.WatchMOVIES-SD"
+    - "site/.WatchXXX"
+    - "site/APPZ"
+    - "site/GAMES"
+    - "site/MISC"
+    - "site/MP3"
+    - "site/TV-HD"
+    - "site/TV-SD"
+    - "site/MOVIES-HD"
+    - "site/MOVIES-SD"
+    - "site/XXX"
+    - "site/UPLOAD"
   tags:
     - common
 
-- name: COMMON | Change home folder permissions
+- name: COMMON | 1.6 Change home folder permissions
   ansible.builtin.file:
-    path: /home/{{ ansible_user }}
-    mode: 0711
+    path: "/home/{{ ansible_user }}"
+    mode: "0711"
   tags:
     - common
 
-- name: COMMON | Remove unnecessary messages of the day
+- name: COMMON | 1.7 Remove unnecessary messages of the day
   ansible.builtin.file:
     path: "/etc/motd.d/{{ item }}"
-    state: absent
+    state: "absent"
   become: true
   loop:
     - "cockpit"
@@ -67,58 +88,106 @@
   tags:
     - common
 
-- name: COMMON | Add cleanup cron for Torrent files
+- name: COMMON | 1.8 Add cleanup cron for Torrent files
   ansible.builtin.cron:
-    name: "Remove *.torrent files older than 120 days every 1st day of the month (at 12:00AM)"
+    name: "Remove *.torrent files older than 120 days every 1st \
+          day of the month (at 12:00AM)"
     day: "1"
     minute: "0"
     hour: "0"
-    job: "find /home/{{ ansible_user }}/site/.Watch*/*.torrent -type f -ctime +120 -delete"
+    job: "find /home/{{ ansible_user }}/site/.Watch*/*.torrent \
+          -type f -ctime +120 -delete"
     backup: true
   tags:
     - common
 
-- name: COMMON | Add cleanup cron for the Torrent data
+- name: COMMON | 1.9 Add cleanup cron for the Torrent data
   ansible.builtin.cron:
-    name: "Remove site sub-folders older than 120 days every 1st day of the month (at 12:02AM)"
+    name: "Remove site sub-folders older than 120 days every 1st \
+          day of the month (at 12:02AM)"
     day: "1"
     minute: "2"
     hour: "0"
-    job: "find /home/{{ ansible_user }}/site/ -maxdepth 2 -mindepth 2 -type d -ctime +120 -exec rm -rf \"{}\" +"
+    job: "find /home/{{ ansible_user }}/site/ -maxdepth 2 -mindepth \
+          2 -type d -ctime +120 -exec rm -rf \"{}\" +"
   tags:
     - common
 
-- name: COMMON | Add useful alias rt
+- name: COMMON | 1.10 Add useful alias rt
   ansible.builtin.lineinfile:
     path: "~/.bashrc"
     line: "alias rt=\"tmux a\""
     create: true
+    mode: "0644"
   tags:
     - common
 
-- name: COMMON | Autobrr service, part 1
-  ansible.builtin.copy:
-    src: autobrr/autobrr\@.service
-    dest: /etc/systemd/system/autobrr\@.service
-    backup: false
-  become: true
-  tags:
-    - common
-
-- name: COMMON | Autobrr service, part 2
-  ansible.builtin.command: "systemctl daemon-reload"
-  become: true
-  tags:
-    - common
-
-- name: COMMON | Autobrr installation, part 1
+- name: COMMON | 1.11 Add Autobrr service
   ansible.builtin.template:
-    src: autobrr/upgrade_autobrr.sh
-    dest: /home/{{ ansible_user }}/upgrade_autobrr.sh
+    src: "autobrr/autobrr.service.j2"
+    dest: "/etc/systemd/system/autobrr@.service"
+    backup: false
+    mode: "0644"
+  become: true
   tags:
     - common
 
-- name: COMMON | Autobrr installation, part 2
-  ansible.builtin.command: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
+- name: COMMON | 1.12 Add Autobrr config directory
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/.config/autobrr/"
+    state: "directory"
+    mode: "0755"
+  tags:
+    - common
+
+- name: COMMON | 1.13 Generate session secret for Autobrr
+  ansible.builtin.shell:
+    cmd: "set -o pipefail && head /dev/urandom | tr -dc A-Za-z0-9 | head -c32"
+    executable: "/bin/bash"
+  changed_when: true
+  register: session_secret
+  tags:
+    - common
+
+- name: COMMON | 1.14 Add Autobrr configuration file
+  ansible.builtin.template:
+    src: "autobrr/config.toml.j2"
+    dest: "/home/{{ ansible_user }}/.config/autobrr/config.toml"
+    mode: "0644"
+  tags:
+    - common
+
+- name: COMMON | 1.15 Unarchive Autobrr
+  ansible.builtin.unarchive:
+    src: "https://github.com/autobrr/autobrr/releases/download/\
+          v{{ autobrr_version }}/autobrr_{{ autobrr_version }}_\
+          linux_x86_64.tar.gz"
+    dest: "/home/{{ ansible_user }}"
+    remote_src: true
+  tags:
+    - common
+
+- name: COMMON | 1.16 Install Autobrr binaries
+  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/\
+                            {{ ansible_user }}/autobrrctl /usr/local/bin/"
+  args:
+    creates: "/usr/local/bin/autobrr"
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.17 Restore Autobrr files default SELinux security contexts
+  ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
+  register: restorecon_usr_local_bin
+  changed_when: "'Relabeled' in restorecon_usr_local_bin.stdout"
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.18 Add Autobrr backup & upgrade shell script
+  ansible.builtin.template:
+    src: "autobrr/upgrade_autobrr.sh.j2"
+    dest: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
+    mode: "u=rwx,g=rx,o=rx"
   tags:
     - common

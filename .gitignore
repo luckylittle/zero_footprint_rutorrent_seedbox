@@ -1,1 +1,9 @@
 files/vsftpd/users.txt
+.venv
+.terraform
+.travis.yml
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+tests/ansible-zero-footprint-ruT-seedbox
+password.txt

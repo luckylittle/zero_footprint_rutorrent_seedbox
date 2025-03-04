@@ -1,3 +1,4 @@
+# {{ ansible_managed }}
 listen_port={{ ftp_port }}
 max_clients=8
 max_per_ip=8
@@ -12,14 +13,16 @@ anonymous_enable=NO
 local_enable=YES
 local_root=/home/{{ ansible_user }}/site
 write_enable=YES
-local_umask=022
+local_umask=000
+file_open_mode=0777
 dirmessage_enable=NO
 xferlog_enable=NO
 xferlog_std_format=NO
 log_ftp_protocol=YES
 dual_log_enable=YES
 xferlog_file=/dev/null
-vsftpd_log_file=/var/log/vsftpd.log
+vsftpd_log_file=/dev/null
+syslog_enable=YES
 idle_session_timeout=60
 data_connection_timeout=120
 nopriv_user={{ ansible_user }}

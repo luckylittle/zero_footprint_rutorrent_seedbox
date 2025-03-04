@@ -1,5 +1,13 @@
 ---
 # handlers file for ansible-role-zero-footprint-ruT-seedbox
 - name: Reload firewalld
-  ansible.builtin.command: firewall-cmd --reload
+  ansible.builtin.command: "firewall-cmd --reload"
+  become: true
+  register: firewallcmd_reload
+  changed_when: firewallcmd_reload.stdout == "success"
+
+- name: Restart journal
+  ansible.builtin.systemd_service:
+    state: restarted
+    name: "systemd-journald"
   become: true
