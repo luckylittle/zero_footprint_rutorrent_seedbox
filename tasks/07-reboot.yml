@@ -32,11 +32,7 @@
   tags:
     - reboot
 
-- name: REBOOT | 7.4 Empty audit.log after the reboot \
-        (cannot be done before that)
-  community.general.filesize:
-    path: "/var/log/audit/audit.log"
-    size: "0B"
-  become: true
+- name: REBOOT | 7.4 Test we can logon back after the reboot
+  ansible.builtin.ping:
   tags:
     - reboot

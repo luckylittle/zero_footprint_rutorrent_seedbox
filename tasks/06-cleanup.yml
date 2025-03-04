@@ -1,5 +1,6 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox/06-cleanup
+
 - name: CLEANUP | 6.1 Remove unnecessary packages
   ansible.builtin.dnf:
     name: "{{ item }}"

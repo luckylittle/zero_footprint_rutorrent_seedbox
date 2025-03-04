@@ -1,5 +1,6 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox/05-security
+
 - name: SECURITY | 5.1 Install packages
   ansible.builtin.dnf:
     name: "{{ item }}"
@@ -33,7 +34,7 @@
     - security
 
 - name: SECURITY | 5.4 Compile the SELinux modules
-  ansible.builtin.command: "make -f /usr/share/selinux/devel/Makefile\
+  ansible.builtin.command: "make -f /usr/share/selinux/devel/Makefile \
                            {{ item | split(\".\") | first }}.pp"
   args:
     chdir: "/tmp"

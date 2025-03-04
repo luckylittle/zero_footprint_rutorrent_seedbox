@@ -1,5 +1,6 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox/01-common
+
 - name: COMMON | 1.1 Upgrade all existing packages
   ansible.builtin.dnf:
     name: "*"

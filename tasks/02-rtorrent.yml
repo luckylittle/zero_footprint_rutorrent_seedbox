@@ -1,5 +1,6 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox/02-rtorrent
+
 - name: RTORRENT | 2.1 Install required packages
   ansible.builtin.dnf:
     name: "{{ item }}"
