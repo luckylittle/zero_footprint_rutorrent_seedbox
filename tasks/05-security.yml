@@ -145,9 +145,9 @@
   tags:
     - security
 
-- name: SECURITY | 5.14 Copy the configuration for Fail2Ban (vsftpd)
-  ansible.builtin.copy:
-    src: "fail2ban/vsftpd.local"
+- name: SECURITY | 5.14 Template the configuration for Fail2Ban (vsftpd)
+  ansible.builtin.template:
+    src: "fail2ban/vsftpd.local.j2"
     dest: "/etc/fail2ban/jail.d/vsftpd.local"
     backup: true
     mode: "0644"
