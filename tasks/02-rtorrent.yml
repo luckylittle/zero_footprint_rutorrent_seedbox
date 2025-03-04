@@ -36,6 +36,9 @@
   args:
     chdir: "~/{{ libtorrent_dl | urlsplit('path') | \
             basename | regex_replace('.tar.gz') }}"
+    creates: "~/{{ libtorrent_dl | urlsplit('path') | \
+              basename | regex_replace('.tar.gz') }}\
+              /config.status"
   tags:
     - rtorrent
 
@@ -44,6 +47,9 @@
   args:
     chdir: "~/{{ libtorrent_dl | urlsplit('path') | \
             basename | regex_replace('.tar.gz') }}"
+    creates: "~/{{ libtorrent_dl | urlsplit('path') | \
+              basename | regex_replace('.tar.gz') }}\
+              /src/.libs"
   tags:
     - rtorrent
 
@@ -52,6 +58,7 @@
   args:
     chdir: "/home/{{ ansible_user }}/{{ libtorrent_dl | \
             urlsplit('path') | basename | regex_replace('.tar.gz') }}"
+    creates: "/usr/local/lib/libtorrent.la"
   become: true
   tags:
     - rtorrent
@@ -63,6 +70,9 @@
   args:
     chdir: "~/{{ rtorrent_dl | urlsplit('path') | \
             basename | regex_replace('.tar.gz') }}"
+    creates: "~/{{ rtorrent_dl | urlsplit('path') | \
+              basename | regex_replace('.tar.gz') }}\
+              /config.status"
   tags:
     - rtorrent
 
@@ -71,6 +81,9 @@
   args:
     chdir: "~/{{ rtorrent_dl | urlsplit('path') | \
             basename | regex_replace('.tar.gz') }}"
+    creates: "~/{{ rtorrent_dl | urlsplit('path') | \
+              basename | regex_replace('.tar.gz') }}\
+              /src/.libs"
   tags:
     - rtorrent
 
@@ -79,6 +92,7 @@
   args:
     chdir: "/home/{{ ansible_user }}/{{ rtorrent_dl | \
             urlsplit('path') | basename | regex_replace('.tar.gz') }}"
+    creates: "/usr/local/bin/rtorrent"
   become: true
   tags:
     - rtorrent

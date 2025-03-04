@@ -37,6 +37,7 @@
                            {{ item | split(\".\") | first }}.pp"
   args:
     chdir: "/tmp"
+    creates: "/tmp/rutorrent.pp"
   loop:
     - "rutorrent.te"
     - "tmux.te"
@@ -47,6 +48,7 @@
   ansible.builtin.command: "semodule -i {{ item }}"
   args:
     chdir: "/tmp"
+  changed_when: true
   become: true
   loop:
     - "rutorrent.pp"
@@ -175,7 +177,27 @@
   tags:
     - security
 
-- name: SECURITY | 5.17 Disable shell history
+- name: SECURITY | 5.17 Copy the filter for Fail2Ban (lighttpd-auth)
+  ansible.builtin.copy:
+    src: "fail2ban/lighttpd-auth.conf"
+    dest: "/etc/fail2ban/filter.d/lighttpd-auth.conf"
+    backup: true
+    mode: "0644"
+  become: true
+  tags:
+    - security
+
+- name: SECURITY | 5.18 Copy the filter for Fail2Ban (vsftpd)
+  ansible.builtin.copy:
+    src: "fail2ban/vsftpd.conf"
+    dest: "/etc/fail2ban/filter.d/vsftpd.conf"
+    backup: true
+    mode: "0644"
+  become: true
+  tags:
+    - security
+
+- name: SECURITY | 5.19 Disable shell history
   ansible.builtin.lineinfile:
     path: "/etc/profile"
     regexp: '^HISTSIZE=1000$'

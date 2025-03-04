@@ -3,6 +3,8 @@
 - name: Reload firewalld
   ansible.builtin.command: "firewall-cmd --reload"
   become: true
+  register: firewallcmd_reload
+  changed_when: firewallcmd_reload.stdout == "success"
 
 - name: Restart journal
   ansible.builtin.systemd_service:

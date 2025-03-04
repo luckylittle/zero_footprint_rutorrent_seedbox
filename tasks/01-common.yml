@@ -143,6 +143,7 @@
   ansible.builtin.shell:
     cmd: "set -o pipefail && head /dev/urandom | tr -dc A-Za-z0-9 | head -c32"
     executable: "/bin/bash"
+  changed_when: true
   register: session_secret
   tags:
     - common
@@ -168,12 +169,16 @@
 - name: COMMON | 1.16 Install Autobrr binaries
   ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/\
                             {{ ansible_user }}/autobrrctl /usr/local/bin/"
+  args:
+    creates: "/usr/local/bin/autobrr"
   become: true
   tags:
     - common
 
 - name: COMMON | 1.17 Restore Autobrr files default SELinux security contexts
   ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
+  register: restorecon_usr_local_bin
+  changed_when: "'Relabeled' in restorecon_usr_local_bin.stdout"
   become: true
   tags:
     - common

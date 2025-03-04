@@ -96,7 +96,8 @@
       ansible.builtin.shell:
         cmd: "set -o pipefail && awk '{if(NR%2!=0)print}' ~/users.txt \
              | grep -v {{ ansible_user }}"
-        executable: /bin/bash
+        executable: "/bin/bash"
+      changed_when: true
       become: true
       register: vsftpd_additional_users
 
@@ -113,6 +114,8 @@
     - name: VSFTPD | 3.9.4 Generate login database
       ansible.builtin.command: db_load -T -t hash -f \
                                 /users.txt /etc/vsftpd/login.db
+      args:
+        creates: "/etc/vsftpd/login.db"
 
     - name: VSFTPD | 3.9.5 Remove unnecessary file
       ansible.builtin.file:

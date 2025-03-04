@@ -64,6 +64,7 @@
                           regex_replace('.tar.gz') }}/*"
   become: true
   when: rutorrent_stat.stat.exists
+  changed_when: true
   tags:
     - rutorrent
 
@@ -196,5 +197,6 @@
     - "conf.d/fastcgi.conf"
   register: command_result
   failed_when: command_result.rc != 0
+  changed_when: true
   tags:
     - rutorrent

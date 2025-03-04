@@ -1,7 +1,7 @@
 luckylittle.zero_footprint_rutorrent_seedbox
 ============================================
 
-Configures vanilla RHEL8/9 system to be lightweight and bulletproof seedbox running rTorrent and ruTorrent. It aims to be secure (SELinux, SSL, Fail2Ban enabled) and creates very few logs (zero footprint). It also provides modern autodownloading capabilities.
+Configures vanilla RHEL8/9 system to be lightweight and bulletproof seedbox running rTorrent and ruTorrent. It aims to be secure (SELinux, SSL, Fail2Ban enabled) and creates absolutely no logs (a.k.a "zero footprint)". It also provides modern autodownloading capabilities. Missing logs will make troubleshooting difficult, but ephemeral journal should be sufficient. Security and simplicity was priroitised over anything else. PRs are most welcome!
 
 Requirements
 ------------
@@ -28,11 +28,10 @@ Role Variables
 * `rutorrent_dl` - URL of the [ruTorrent](https://github.com/Novik/ruTorrent) sources.
 * `https_port` - what port should rutorrent listen on, by default 443.
 * `htpasswd` - HTTP basic password to log in to ruTorrent interface. Default is r3dh4t.
-* `fail2ban_ignore_ipv4` - what IPv4 address should be excluded from being banned by Fail2Ban. Whitelisted is arbitrary address 123.124.125.126. You need to change it to your own!
+* `fail2ban_ignore_ipv4` - what IPv4 address should be excluded from being banned by Fail2Ban. Whitelisted is arbitrary address 123.124.125.126. You need to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L42) to your own!
 * `require_reboot` - does the machine require reboot after the playbook is finished. It is recommended & default to be true.
 
-_Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user.
-the ratio defaults should be sufficient (between 400%-500%).
+_Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user. The ratio defaults should be sufficient (between [400%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L106)-[500%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L105)).
 
 Dependencies
 ------------
@@ -277,7 +276,7 @@ output "instance_dns" {
 
 </details>
 
-Then you can just run this Ansible role against the EC2 machine like: `time ansible-playbook -i inventory -u ec2-user test.yml --ask-vault-pass` within the tests folder.
+Then you can just run add `instance_public_ip` to the [inventory](tests/inventory) and run this Ansible role against the EC2 machine like: `time ansible-playbook -i inventory -u ec2-user test.yml --ask-vault-pass` within the [tests](tests/) folder (`cd tests; ln -s ../../zero_footprint_rutorrent_seedbox .`).
 
 License
 -------
@@ -294,4 +293,4 @@ Author Information
 
 Lucian Maly <<lmaly@redhat.com>>
 
-_Last update: Mon 03 Mar 2025 02:39:20 UTC_
+_Last update: Tue 04 Mar 2025 04:59:38 UTC_
