@@ -134,7 +134,16 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | 4.11 Template the configuration for lighttpd
+- name: RUTORRENT | 4.11 php-fpm log is sent to syslogd
+  ansible.builtin.lineinfile:
+    path: "/etc/php-fpm.conf"
+    regexp: '^error_log = /var/log/php-fpm/error.log'
+    line: "error_log = syslog"
+  become: true
+  tags:
+    - rutorrent
+
+- name: RUTORRENT | 4.12 Template the configuration for lighttpd
   ansible.builtin.template:
     src: "lighttpd/lighttpd.conf.j2"
     dest: "/etc/lighttpd/lighttpd.conf"
@@ -144,7 +153,7 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | 4.12 Copy the configuration for lighttpd modules
+- name: RUTORRENT | 4.13 Copy the configuration for lighttpd modules
   ansible.builtin.copy:
     src: "lighttpd/modules.conf"
     dest: "/etc/lighttpd/modules.conf"
@@ -154,7 +163,7 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | 4.13 Copy the configuration for auth module
+- name: RUTORRENT | 4.14 Copy the configuration for auth module
   ansible.builtin.template:
     src: "lighttpd/auth.conf.j2"
     dest: "/etc/lighttpd/conf.d/auth.conf"
@@ -164,7 +173,7 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | 4.14 Copy the configuration for fastcgi module
+- name: RUTORRENT | 4.15 Copy the configuration for fastcgi module
   ansible.builtin.copy:
     src: "lighttpd/fastcgi.conf"
     dest: "/etc/lighttpd/conf.d/fastcgi.conf"
@@ -174,7 +183,7 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | 4.15 Add a user to a htpasswd file and ensure \
+- name: RUTORRENT | 4.16 Add a user to a htpasswd file and ensure \
         permissions are set
   community.general.htpasswd:
     path: "/var/www/ruTorrent/.htpasswd"
@@ -187,7 +196,7 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | 4.16 Validate the lighttpd config files
+- name: RUTORRENT | 4.17 Validate the lighttpd config files
   ansible.builtin.command: "lighttpd -t -f {{ item }}"
   args:
     chdir: "/etc/lighttpd/"
