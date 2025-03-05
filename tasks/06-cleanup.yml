@@ -60,12 +60,13 @@
   tags:
     - cleanup
 
-- name: CLEANUP | 6.5 Remove unnecessary Autobrr files
+- name: CLEANUP | 6.5 Remove unnecessary Autobrr & Sizechecker files
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: "absent"
   loop:
     - "autobrr_{{ autobrr_version }}_linux_x86_64.tar.gz"
+    - "sizechecker_{{ sizechecker_version }}_linux_amd64.tar.gz"
     - "LICENSE"
     - "README.md"
   tags:
@@ -328,6 +329,7 @@
     - "/var/log/hawkey.log"
     - "/var/log/lastlog"
     - "/var/log/rhsm/rhsm.log"
+    - "/var/log/rhsm/rhsmcertd.log"
     - "/var/log/tallylog"
     - "/var/log/tuned/tuned.log"
     - "/var/log/wtmp"

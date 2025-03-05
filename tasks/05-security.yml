@@ -92,7 +92,6 @@
     - "{{ rtorrent_port }}/udp"
     - "{{ ftp_port }}/tcp"
     - "{{ pasv_port_range }}/tcp"
-    - "7474/tcp"
   tags:
     - security
 

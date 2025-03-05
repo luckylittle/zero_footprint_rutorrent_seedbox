@@ -16,7 +16,7 @@ Role Variables
 * `set_timezone` - change the time zone of the server, defaults to Europe/Prague.
 * `set_google_dns` - if `true`, it will add Google DNS servers to the primary interface. Defaults to false.
 * `create_new_user` - whether you want to also create another user. Defaults to false.
-* `autobrr_version` and `autobrr_port` - contains the latest [autobrr](https://github.com/autobrr/autobrr) version and a standard port 7474.
+* `autobrr_version` & `sizechecker_version` - contains the latest [Autobrr](https://github.com/autobrr/autobrr) and [Sizechecker](https://github.com/s0up4200/sizechecker) versions.
 * `epel_dl` - URL of the [EPEL](https://docs.fedoraproject.org/en-US/epel/) RPM. Defaults to the RHEL9 EPEL.
 * `libtorrent_dl` - URL of the [libtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
 * `rtorrent_dl` - URL of the [rtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
@@ -278,6 +278,19 @@ output "instance_dns" {
 
 Then you can just run add `instance_public_ip` to the [inventory](tests/inventory) and run this Ansible role against the EC2 machine like: `time ansible-playbook -i inventory -u ec2-user test.yml --ask-vault-pass` within the [tests](tests/) folder (`cd tests; ln -s ../../zero_footprint_rutorrent_seedbox .`).
 
+Services Installed
+------------------
+
+After you succesfully apply this role, you should be able to access the following services:
+
+|Service      |URL                                                       |
+|-------------|----------------------------------------------------------|
+|autobrr      |https://<IP_ADDR>:<https_port>/autobrr/                   |
+|ftp          |ftps://<IP_ADDR>:<ftp_port>                               |
+|rtorrent rpc |https://<IP_ADDR>:<https_port>/plugins/httprpc/action.php |
+|rutorrent    |https://<IP_ADDR>:<https_port>                            |
+|ssh          |ssh://<IP_ADDR>:22                                        |
+
 License
 -------
 
@@ -293,4 +306,4 @@ Author Information
 
 Lucian Maly <<lmaly@redhat.com>>
 
-_Last update: Tue 04 Mar 2025 04:59:38 UTC_
+_Last update: Wed 05 Mar 2025 06:19:58 UTC_

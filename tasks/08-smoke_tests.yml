@@ -1,0 +1,82 @@
+---
+# tasks file for ansible-role-zero-footprint-ruT-seedbox/08-smoke_test
+
+- name: TEST | 8.1 Check for port 22 to be open and contain "OpenSSH"
+  ansible.builtin.wait_for:
+    port: 22
+    host: "{{ (ansible_ssh_host | default(ansible_host)) | default\
+          (inventory_hostname) }}"
+    search_regex: "OpenSSH"
+    timeout: 60
+  register: test_ssh
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.2 Check for FTP port to be open and contain "220 Welcome to"
+  ansible.builtin.wait_for:
+    port: "{{ ftp_port }}"
+    host: "{{ (ansible_ssh_host | default(ansible_host)) | default\
+          (inventory_hostname) }}"
+    search_regex: "220 Welcome to"
+    timeout: 60
+  register: test_ftp
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.3 Check for rtorrent port to be open
+  ansible.builtin.wait_for:
+    port: "{{ rtorrent_port }}"
+    host: "{{ (ansible_ssh_host | default(ansible_host)) | default\
+          (inventory_hostname) }}"
+    timeout: 60
+  register: test_rtorrent
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.4 Check for RPC rtorrent endpoint to be open
+  ansible.builtin.uri:
+    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/plugins/\
+          httprpc/action.php"
+    return_content: true
+    validate_certs: false
+  register: test_rpc
+  failed_when: "'false' not in test_rpc.content"
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.5 Check for HTTPS rutorrent port to be open
+  ansible.builtin.uri:
+    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}:{{ \
+          https_port }}"
+    return_content: true
+    validate_certs: false
+  register: test_https
+  failed_when: "'rTorrent' not in test_https.content"
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.6 Check for Autobrr to be responding
+  ansible.builtin.uri:
+    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/autobrr/"
+    return_content: true
+    validate_certs: false
+  register: test_autobrr
+  failed_when: "'autobrr' not in test_autobrr.content"
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.7 Debug
+  ansible.builtin.debug:
+    msg:
+      - "Results:"
+      - "SSH: {{ test_ssh.state }}"
+      - "FTP: {{ test_ftp.state }}"
+      - "RTORRENT: {{ test_rtorrent.state }}"
+      - "RTORRENT HTTPRPC: {{ test_rpc.status }}"
+      - "RUTORRENT: {{ test_https.status }}"
+      - "AUTOBRR: {{ test_autobrr.status }}"
+  tags:
+    - smoke_tests

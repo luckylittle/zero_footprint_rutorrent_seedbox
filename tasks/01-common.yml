@@ -44,7 +44,7 @@
   ansible.builtin.file:
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: "directory"
-    mode: "u=rwx,g=rwx,o=rwx"
+    mode: "0777"
   loop:
     - ".Session"
     - "site"
@@ -167,16 +167,29 @@
   tags:
     - common
 
-- name: COMMON | 1.16 Install Autobrr binaries
+- name: COMMON | 1.16 Unarchive Sizechecker
+  ansible.builtin.unarchive:
+    src: "https://github.com/s0up4200/sizechecker/releases/download/\
+          v{{ sizechecker_version }}/sizechecker_{{ sizechecker_version }}_\
+          linux_amd64.tar.gz"
+    dest: "/home/{{ ansible_user }}"
+    remote_src: true
+  tags:
+    - common
+
+- name: COMMON | 1.17 Install Autobrr & Sizechecker binaries
   ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/\
-                            {{ ansible_user }}/autobrrctl /usr/local/bin/"
+                            {{ ansible_user }}/autobrrctl \
+                            /home/{{ ansible_user }}/sizechecker \
+                            /usr/local/bin/"
   args:
     creates: "/usr/local/bin/autobrr"
   become: true
   tags:
     - common
 
-- name: COMMON | 1.17 Restore Autobrr files default SELinux security contexts
+- name: COMMON | 1.18 Restore Autobrr & Sizechecker files default SELinux \
+        security contexts
   ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
   register: restorecon_usr_local_bin
   changed_when: "'Relabeled' in restorecon_usr_local_bin.stdout"
@@ -184,10 +197,26 @@
   tags:
     - common
 
-- name: COMMON | 1.18 Add Autobrr backup & upgrade shell script
+- name: COMMON | 1.19 Label an unlabeled port 7474 for Autobrr
+  ansible.builtin.command: "semanage port -a -t http_port_t -p tcp 7474"
+  changed_when: true
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.20 Add Autobrr backup & upgrade shell script
   ansible.builtin.template:
     src: "autobrr/upgrade_autobrr.sh.j2"
     dest: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
-    mode: "u=rwx,g=rx,o=rx"
+    mode: "0755"
+  tags:
+    - common
+
+- name: COMMON | 1.21 Add panic shell script
+  ansible.builtin.template:
+    src: "common/panic.sh.j2"
+    dest: "/usr/local/bin/panic.sh"
+    mode: "0755"
+  become: true
   tags:
     - common

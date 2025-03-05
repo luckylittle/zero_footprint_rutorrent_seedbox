@@ -34,3 +34,8 @@
   ansible.builtin.include_tasks: "07-reboot.yml"
   tags:
     - reboot
+
+- name: MAIN | 8.0 Include 08-smoke_tests.yml
+  ansible.builtin.include_tasks: "08-smoke_tests.yml"
+  tags:
+    - smoke_tests
