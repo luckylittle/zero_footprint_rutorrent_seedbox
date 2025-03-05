@@ -5,13 +5,13 @@
 #
 # Default: "localhost"
 #
-host = "0.0.0.0"
+host = "127.0.0.1"
 
 # Port
 #
 # Default: 7474
 #
-port = {{ autobrr_port }}
+port = 7474
 
 # Base url
 # Set custom baseUrl eg /autobrr/ to serve in subdirectory.
@@ -19,7 +19,7 @@ port = {{ autobrr_port }}
 #
 # Optional
 #
-#baseUrl = "/autobrr/"
+baseUrl = "/autobrr/"
 
 # Base url mode legacy
 # This is kept for compatibility with older versions doing url rewrite on the proxy.
@@ -27,7 +27,7 @@ port = {{ autobrr_port }}
 #
 # Default: true
 #
-baseUrlModeLegacy = true
+baseUrlModeLegacy = false
 
 # autobrr logs file
 # If not defined, logs to stdout

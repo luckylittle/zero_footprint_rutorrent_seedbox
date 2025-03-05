@@ -7,7 +7,7 @@ set_google_dns: false
 create_new_user: false
 new_user: "redhat"
 autobrr_version: "1.59.0"
-autobrr_port: 7474
+sizechecker_version: "1.2.0"
 
 # 02-rtorrent
 epel_dl: "https://dl.fedoraproject.org/pub/epel/\

@@ -14,7 +14,6 @@ server.document-root = server_root
 server.pid-file = state_dir + "/lighttpd.pid"
 server.errorlog-use-syslog = "enable"
 accesslog.use-syslog = "enable"
-include "conf.d/debug.conf"
 server.event-handler = "linux-sysepoll"
 server.network-backend = "sendfile"
 server.stat-cache-engine = "simple"
