@@ -6,7 +6,8 @@ Configures vanilla RHEL8/9 system to be lightweight and bulletproof seedbox runn
 Requirements
 ------------
 
-* It is expected, that you have a brand new RHEL8/9 system and have Ansible access sorted out - including working `sudo`. You can use my other role [luckylittle/ansible-role-create-user](https://github.com/luckylittle/ansible-role-create-user) for passwordless SSH access and sudo.
+* It is expected, that you have a brand new RHEL8/9 system and have Ansible access sorted out - including working `sudo` (you can use my other role [luckylittle/ansible-role-create-user](https://github.com/luckylittle/ansible-role-create-user) for passwordless SSH access and sudo).
+* :warning: **THIS ROLE REQUIRES PASSWORDLESS ACCESS TO YOUR SYSTEM USING SSH KEYPAIR AND NOT THE PASSWORD** (e.g. `ssh-copy-id`) - otherwise you will lock yourself out, because sshd config will change to `PasswordAuthentication no` :warning:
 
 Role Variables
 --------------
