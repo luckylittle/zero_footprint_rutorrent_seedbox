@@ -212,7 +212,8 @@
 - name: CLEANUP | 6.18 Remove logrotate without dependency (vsftpd)
   ansible.builtin.command: "sudo rpm -e --nodeps logrotate"  # Removing
   # logrotate via dnf would remove vsftpd
-  removes: "/etc/logrotate.conf"
+  args:
+    removes: "/etc/logrotate.conf"
   become: true
   tags:
     - cleanup
