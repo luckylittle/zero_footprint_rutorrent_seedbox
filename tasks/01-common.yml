@@ -220,3 +220,30 @@
   become: true
   tags:
     - common
+
+- name: COMMON | 1.22 Systemd wide DefaultLimitNOFILE
+  ansible.builtin.lineinfile:
+    path: "/etc/systemd/system.conf"
+    regexp: '^#DefaultLimitNOFILE=.*'
+    line: "DefaultLimitNOFILE={{ maximum_number_of_open_file_descriptors }}"
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.23 Set soft nofile limit
+  ansible.builtin.lineinfile:
+    path: "/etc/security/limits.conf"
+    line: "{{ ansible_user }} soft nofile {{ maximum_number_of_open_file_descriptors }}"
+    insertbefore: '^# End of file$'
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.24 Set hard nofile limit
+  ansible.builtin.lineinfile:
+    path: "/etc/security/limits.conf"
+    line: "{{ ansible_user }} hard nofile {{ maximum_number_of_open_file_descriptors }}"
+    insertbefore: '^# End of file$'
+  become: true
+  tags:
+    - common
