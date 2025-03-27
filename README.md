@@ -18,6 +18,7 @@ Role Variables
 * `set_google_dns` - if `true`, it will add Google DNS servers to the primary interface. Defaults to false.
 * `create_new_user` - whether you want to also create another user. Defaults to false.
 * `autobrr_version` & `sizechecker_version` - contains the latest [Autobrr](https://github.com/autobrr/autobrr) and [Sizechecker](https://github.com/s0up4200/sizechecker) versions.
+* `maximum_number_of_open_file_descriptors` - applicable in global, systemd, rtorrent - self explanatory, defaults to 1023.
 * `epel_dl` - URL of the [EPEL](https://docs.fedoraproject.org/en-US/epel/) RPM. Defaults to the RHEL9 EPEL.
 * `libtorrent_dl` - URL of the [libtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
 * `rtorrent_dl` - URL of the [rtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
@@ -59,7 +60,7 @@ Example Playbook
 - hosts: seedbox
   remote_user: redhat
   roles:
-    - luckylittle.zero_footprint_rutorrent_seedbox
+    - "luckylittle.zero_footprint_rutorrent_seedbox"
 ```
 
 Testing
@@ -300,11 +301,11 @@ MIT
 Ansible Galaxy
 --------------
 
-[luckylittle.ansible_role_zero_footprint_rut_seedbox](https://galaxy.ansible.com/ui/standalone/roles/luckylittle/zero_footprint_rutorrent_seedbox/)
+[luckylittle.zero_footprint_rutorrent_seedbox](https://galaxy.ansible.com/ui/standalone/roles/luckylittle/zero_footprint_rutorrent_seedbox/)
 
 Author Information
 ------------------
 
 Lucian Maly <<lmaly@redhat.com>>
 
-_Last update: Wed 05 Mar 2025 06:19:58 UTC_
+_Last update: Thu 27 Mar 2025 03:12:33 UTC_
