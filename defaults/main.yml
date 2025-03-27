@@ -27,7 +27,7 @@ single_user: false
 
 # 04-rutorrent
 rutorrent_dl: "https://github.com/Novik/ruTorrent/archive/\
-              refs/tags/v5.1.5.tar.gz"
+              refs/tags/v5.1.6.tar.gz"
 https_port: 443
 htpasswd: !vault |
   $ANSIBLE_VAULT;1.1;AES256
@@ -40,7 +40,7 @@ htpasswd: !vault |
 # command. The value is `r3dh4t`, password to decrypt is `password1`.
 
 # 05-security
-fail2ban_ignore_ipv4: |
+fail2ban_ignore_ipv4: >-
   "127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 172.16.0.0/12 X.X.X.X"
 
 # 07-reboot
