@@ -80,3 +80,14 @@
       - "AUTOBRR: {{ test_autobrr.status }}"
   tags:
     - smoke_tests
+
+- name: TEST | 8.8 Populate service facts
+  ansible.builtin.service_facts:
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.9 Print service facts
+  ansible.builtin.debug:
+    var: ansible_facts.services
+  tags:
+    - smoke_tests
