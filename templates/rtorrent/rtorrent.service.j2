@@ -1,17 +1,18 @@
 # {{ ansible_managed }}
 [Unit]
-Description=rTorrent Service
-Requires=network.target local-fs.target
+Description=rTorrent Service (inside tmux)
+After=network.target local-fs.target
 
 [Service]
-ExecStartPre=/bin/bash -c "if test -e /home/{{ ansible_user }}/.Session/rtorrent.lock && test -z $(pidof rtorrent); then rm -f /home/{{ ansible_user }}/.Session/rtorrent.lock; fi"
-ExecStart=/usr/bin/tmux -2 new-session -s rt -n rtorrent -d /usr/local/bin/rtorrent
-ExecStop=/usr/bin/tmux send-keys -t rt:rtorrent C-q
-RemainAfterExit=yes
-Restart=on-failure
 Type=forking
 User={{ ansible_user }}
 WorkingDirectory=/home/{{ ansible_user }}
+ExecStartPre=/bin/bash -c "if [ -e /home/{{ ansible_user }}/.Session/rtorrent.lock ]; then rm -f /home/{{ ansible_user }}/.Session/rtorrent.lock; fi"
+ExecStart=/usr/bin/tmux new-session -s rt -d "/usr/local/bin/rtorrent"
+ExecStop=/usr/bin/tmux send-keys -t rt:rtorrent C-q ENTER
+ExecStopPost=/bin/bash -c "timeout 10 sh -c 'while pgrep -f rtorrent; do sleep 1; done'"
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
