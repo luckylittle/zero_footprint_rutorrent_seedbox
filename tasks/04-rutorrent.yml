@@ -131,6 +131,7 @@
     value: "yes"
     mode: "0664"
     backup: true
+  become: true
   tags:
     - rutorrent
 
@@ -142,6 +143,7 @@
     value: "no"
     mode: "0664"
     backup: true
+  become: true
   tags:
     - rutorrent
 
