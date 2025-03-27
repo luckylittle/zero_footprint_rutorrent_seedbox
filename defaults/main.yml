@@ -40,7 +40,7 @@ htpasswd: !vault |
 # command. The value is `r3dh4t`, password to decrypt is `password1`.
 
 # 05-security
-fail2ban_ignore_ipv4: "123.124.125.126"
+fail2ban_ignore_ipv4: "127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 172.16.0.0/12 123.124.125.126"
 
 # 07-reboot
 require_reboot: true

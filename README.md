@@ -30,7 +30,7 @@ Role Variables
 * `rutorrent_dl` - URL of the [ruTorrent](https://github.com/Novik/ruTorrent) sources.
 * `https_port` - what port should rutorrent listen on, by default 443.
 * `htpasswd` - HTTP basic password to log in to ruTorrent interface. Default is r3dh4t.
-* `fail2ban_ignore_ipv4` - what IPv4 address should be excluded from being banned by Fail2Ban. Whitelisted is arbitrary address 123.124.125.126. You need to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L42) to your own!
+* `fail2ban_ignore_ipv4` - what IPv4 address should be excluded from being banned by Fail2Ban. Whitelisted is arbitrary address 123.124.125.126. You need to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L43) to your own!
 * `require_reboot` - does the machine require reboot after the playbook is finished. It is recommended & default to be true.
 
 _Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user. The ratio defaults should be sufficient (between [400%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L106)-[500%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L105)).
