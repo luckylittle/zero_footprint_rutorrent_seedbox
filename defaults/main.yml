@@ -6,8 +6,9 @@ set_timezone: "Europe/Prague"
 set_google_dns: false
 create_new_user: false
 new_user: "redhat"
-autobrr_version: "1.59.0"
-sizechecker_version: "1.2.0"
+autobrr_version: "1.60.0"
+sizechecker_version: "1.3.0"
+maximum_number_of_open_file_descriptors: "1023"
 
 # 02-rtorrent
 epel_dl: "https://dl.fedoraproject.org/pub/epel/\
