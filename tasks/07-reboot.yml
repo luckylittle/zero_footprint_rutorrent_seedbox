@@ -17,6 +17,7 @@
   loop:
     - "{{ autobrr_service }}"
     - "fail2ban"
+    - "fstrim.timer"
     - "lighttpd"
     - "php-fpm"
     - "rtorrent"
