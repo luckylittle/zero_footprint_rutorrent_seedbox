@@ -120,14 +120,17 @@
   tags:
     - security
 
-- name: SECURITY | 5.11 Deny traffic in "default" zone for cockpit
+- name: SECURITY | 5.11 Deny traffic in "default" zone for cockpit and ssh
   ansible.posix.firewalld:
-    service: "cockpit"
+    service: "{{ item }}"
     permanent: true
     state: "disabled"
   become: true
   notify:
     - "Reload firewalld"
+  loop:
+    - "cockpit"
+    - "ssh"
   tags:
     - security
 
