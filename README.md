@@ -7,7 +7,8 @@ Requirements
 ------------
 
 * It is expected, that you have a brand new RHEL8/9 system and have Ansible access sorted out - including working `sudo` (you can use my other role [luckylittle/ansible-role-create-user](https://github.com/luckylittle/ansible-role-create-user) for passwordless SSH access and sudo).
-* :warning: **THIS ROLE REQUIRES PASSWORDLESS ACCESS TO YOUR SYSTEM USING SSH KEYPAIR AND NOT THE PASSWORD** (e.g. `ssh-copy-id`) - otherwise you will lock yourself out, because sshd config will change to `PasswordAuthentication no` :warning:
+* :warning: **THIS ROLE REQUIRES PASSWORDLESS ACCESS TO YOUR SYSTEM USING SSH KEYPAIR AND NOT THE PASSWORD** (e.g. `ssh-copy-id`) - otherwise you will **lock** yourself out, because sshd config will change to `PasswordAuthentication no`! :warning:
+* :warning: Make sure to add your home IP address (or multiple addresses you connect from) to `fail2ban_ignore_ipv4`, or you risk **locking** yourself out, as it is also enforced by firewalld! :warning:
 
 Role Variables
 --------------
@@ -18,6 +19,7 @@ Role Variables
 * `set_google_dns` - if `true`, it will add Google DNS servers to the primary interface. Defaults to false.
 * `create_new_user` - whether you want to also create another user. Defaults to false.
 * `autobrr_version` & `sizechecker_version` - contains the latest [Autobrr](https://github.com/autobrr/autobrr) and [Sizechecker](https://github.com/s0up4200/sizechecker) versions.
+* `maximum_number_of_open_file_descriptors` - applicable in global, systemd, rtorrent - self explanatory, defaults to 1023.
 * `epel_dl` - URL of the [EPEL](https://docs.fedoraproject.org/en-US/epel/) RPM. Defaults to the RHEL9 EPEL.
 * `libtorrent_dl` - URL of the [libtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
 * `rtorrent_dl` - URL of the [rtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
@@ -29,7 +31,7 @@ Role Variables
 * `rutorrent_dl` - URL of the [ruTorrent](https://github.com/Novik/ruTorrent) sources.
 * `https_port` - what port should rutorrent listen on, by default 443.
 * `htpasswd` - HTTP basic password to log in to ruTorrent interface. Default is r3dh4t.
-* `fail2ban_ignore_ipv4` - what IPv4 address should be excluded from being banned by Fail2Ban. Whitelisted is arbitrary address 123.124.125.126. You need to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L42) to your own!
+* `fail2ban_ignore_ipv4` - what IP addresses should be excluded from being banned by Fail2Ban and the same is also used in the **firewalld** limited zone for SSH (only these addresses are allowed to SSH to the seedbox). Whitelisted is arbitrary address `X.X.X.X` and the private IP ranges. You **need** to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L43) to your own!
 * `require_reboot` - does the machine require reboot after the playbook is finished. It is recommended & default to be true.
 
 _Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user. The ratio defaults should be sufficient (between [400%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L106)-[500%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L105)).
@@ -59,7 +61,7 @@ Example Playbook
 - hosts: seedbox
   remote_user: redhat
   roles:
-    - luckylittle.zero_footprint_rutorrent_seedbox
+    - "luckylittle.zero_footprint_rutorrent_seedbox"
 ```
 
 Testing
@@ -300,11 +302,11 @@ MIT
 Ansible Galaxy
 --------------
 
-[luckylittle.ansible_role_zero_footprint_rut_seedbox](https://galaxy.ansible.com/ui/standalone/roles/luckylittle/zero_footprint_rutorrent_seedbox/)
+[luckylittle.zero_footprint_rutorrent_seedbox](https://galaxy.ansible.com/ui/standalone/roles/luckylittle/zero_footprint_rutorrent_seedbox/)
 
 Author Information
 ------------------
 
 Lucian Maly <<lmaly@redhat.com>>
 
-_Last update: Wed 05 Mar 2025 06:19:58 UTC_
+_Last update: Thu 27 Mar 2025 03:12:33 UTC_

@@ -1,39 +1,78 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox/08-smoke_test
 
-- name: TEST | 8.1 Check for port 22 to be open and contain "OpenSSH"
+- name: TEST | 8.1 Populate service_facts
+  ansible.builtin.service_facts:
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.2 Print ACTIVE services
+  ansible.builtin.debug:
+    var: ansible_facts['services'].values() |
+          selectattr('state','equalto','active') |
+          map(attribute='name') | list
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.3 Print INACTIVE services
+  ansible.builtin.debug:
+    var: ansible_facts['services'].values() |
+          selectattr('state','equalto','inactive') |
+          map(attribute='name') | list
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.4 Print RUNNING services
+  ansible.builtin.debug:
+    var: ansible_facts['services'].values() |
+          selectattr('state','equalto','running') |
+          map(attribute='name') | list
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.5 Print STOPPED services
+  ansible.builtin.debug:
+    var: ansible_facts['services'].values() |
+          selectattr('state','equalto','stopped') |
+          map(attribute='name') | list
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.6 Print UNKNOWN services
+  ansible.builtin.debug:
+    var: ansible_facts['services'].values() |
+          selectattr('state','equalto','unknown') |
+          map(attribute='name') | list
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.7 Check for port 22 to be open and contain "OpenSSH"
   ansible.builtin.wait_for:
     port: 22
-    host: "{{ (ansible_ssh_host | default(ansible_host)) | default\
-          (inventory_hostname) }}"
     search_regex: "OpenSSH"
     timeout: 60
   register: test_ssh
   tags:
     - smoke_tests
 
-- name: TEST | 8.2 Check for FTP port to be open and contain "220 Welcome to"
+- name: TEST | 8.8 Check for FTP port to be open and contain "220 Welcome to"
   ansible.builtin.wait_for:
     port: "{{ ftp_port }}"
-    host: "{{ (ansible_ssh_host | default(ansible_host)) | default\
-          (inventory_hostname) }}"
     search_regex: "220 Welcome to"
     timeout: 60
   register: test_ftp
   tags:
     - smoke_tests
 
-- name: TEST | 8.3 Check for rtorrent port to be open
+- name: TEST | 8.9 Check for rtorrent port to be open
   ansible.builtin.wait_for:
     port: "{{ rtorrent_port }}"
-    host: "{{ (ansible_ssh_host | default(ansible_host)) | default\
-          (inventory_hostname) }}"
     timeout: 60
   register: test_rtorrent
   tags:
     - smoke_tests
 
-- name: TEST | 8.4 Check for RPC rtorrent endpoint to be open
+- name: TEST | 8.10 Check for RPC rtorrent endpoint to be open
   ansible.builtin.uri:
     url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
           default(ansible_host)) | default(inventory_hostname) }}/plugins/\
@@ -45,7 +84,7 @@
   tags:
     - smoke_tests
 
-- name: TEST | 8.5 Check for HTTPS rutorrent port to be open
+- name: TEST | 8.11 Check for HTTPS rutorrent port to be open
   ansible.builtin.uri:
     url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
           default(ansible_host)) | default(inventory_hostname) }}:{{ \
@@ -57,7 +96,7 @@
   tags:
     - smoke_tests
 
-- name: TEST | 8.6 Check for Autobrr to be responding
+- name: TEST | 8.12 Check for Autobrr to be responding
   ansible.builtin.uri:
     url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
           default(ansible_host)) | default(inventory_hostname) }}/autobrr/"
@@ -68,15 +107,40 @@
   tags:
     - smoke_tests
 
-- name: TEST | 8.7 Debug
+- name: TEST | 8.13 Show the smoke test results
   ansible.builtin.debug:
     msg:
       - "Results:"
-      - "SSH: {{ test_ssh.state }}"
-      - "FTP: {{ test_ftp.state }}"
-      - "RTORRENT: {{ test_rtorrent.state }}"
-      - "RTORRENT HTTPRPC: {{ test_rpc.status }}"
-      - "RUTORRENT: {{ test_https.status }}"
-      - "AUTOBRR: {{ test_autobrr.status }}"
+      - "########"
+      - "SSH:               {{ test_ssh.state }}"
+      - "FTP:               {{ test_ftp.state }}"
+      - "RTORRENT:          {{ test_rtorrent.state }}"
+      - "RTORRENT HTTPRPC:  {{ test_rpc.msg }}"
+      - "RUTORRENT:         {{ test_https.msg }}"
+      - "AUTOBRR:           {{ test_autobrr.msg }}"
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.14 Output
+  ansible.builtin.debug:
+    msg:
+      - "----------------------------------------------------------------"
+      - "Autobrr URL:"
+      - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/autobrr/"
+      - "----------------------------------------------------------------"
+      - "ruTorrent URL:"
+      - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}"
+      - "----------------------------------------------------------------"
+      - "vsFTPd URL:"
+      - "ftps://{{ (ansible_ssh_host | default(ansible_host)) | \
+          default(inventory_hostname) }}:{{ ftp_port }}"
+      - "----------------------------------------------------------------"
+      - "nzb360 Torrent settings URL:"
+      - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/plugins\
+          /httprpc/action.php"
+      - "----------------------------------------------------------------"
   tags:
     - smoke_tests

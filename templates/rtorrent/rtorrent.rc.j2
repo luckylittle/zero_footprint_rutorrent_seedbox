@@ -48,14 +48,14 @@ protocol.encryption.set = allow_incoming,try_outgoing,enable_retry
 ## Limits for file handle resources, this is optimized for
 ## an `ulimit` of 1024 (a common default). You MUST leave
 ## a ceiling of handles reserved for rTorrent's internal needs!
-network.http.max_open.set = 99
-network.max_open_files.set = 600
-network.max_open_sockets.set = 999
+network.http.max_open.set = {{ maximum_number_of_open_file_descriptors }}
+network.max_open_files.set = {{ maximum_number_of_open_file_descriptors }}
+network.max_open_sockets.set = {{ maximum_number_of_open_file_descriptors }}
 
 ## Memory resource usage (increase if you have a large number of items loaded,
 ## and/or the available resources to spend)
 pieces.memory.max.set = {{ rt_memory_max_set }}
-network.xmlrpc.size_limit.set = 2M
+network.xmlrpc.size_limit.set = 4M
 # Preloading a piece of a file. Default: `0` Possible values: `0` (Off) , `1` (Madvise) , `2` (Direct paging).
 pieces.preload.type.set = 2
 
@@ -104,7 +104,7 @@ schedule2 = watch_directory_9,7,7,"load.start=~/site/.WatchXXX/*.torrent,d.direc
 ratio.enable =
 ratio.max.set = 500
 ratio.min.set = 400
-ratio.upload.set = 100M
+ratio.upload.set = 50M
 method.set = group.seeding.ratio.command,d.close=
 
 ## Run the rTorrent process as a daemon in the background
