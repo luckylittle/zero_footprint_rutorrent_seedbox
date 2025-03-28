@@ -120,3 +120,27 @@
       - "AUTOBRR:           {{ test_autobrr.msg }}"
   tags:
     - smoke_tests
+
+- name: TEST | 8.14 Output
+  ansible.builtin.debug:
+    msg:
+      - "----------------------------------------------------------------"
+      - "Autobrr URL:"
+      - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/autobrr/"
+      - "----------------------------------------------------------------"
+      - "ruTorrent URL:"
+      - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}"
+      - "----------------------------------------------------------------"
+      - "vsFTPd URL:"
+      - "ftps://{{ (ansible_ssh_host | default(ansible_host)) | \
+          default(inventory_hostname) }}:{{ ftp_port }}"
+      - "----------------------------------------------------------------"
+      - "nzb360 Torrent settings URL:"
+      - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/plugins\
+          /httprpc/action.php"
+      - "----------------------------------------------------------------"
+  tags:
+    - smoke_tests
