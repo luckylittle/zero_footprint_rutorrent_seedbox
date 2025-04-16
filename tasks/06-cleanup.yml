@@ -65,8 +65,8 @@
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: "absent"
   loop:
-    - "autobrr_{{ autobrr_version }}_linux_x86_64.tar.gz"
-    - "sizechecker_{{ sizechecker_version }}_linux_amd64.tar.gz"
+    - "autobrr_{{ autobrr_ver }}_linux_x86_64.tar.gz"
+    - "sizechecker_{{ sizechecker_ver }}_linux_amd64.tar.gz"
     - "LICENSE"
     - "README.md"
   tags:
