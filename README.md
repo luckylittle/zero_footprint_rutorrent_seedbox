@@ -18,20 +18,19 @@ Role Variables
 * `set_timezone` - change the time zone of the server, defaults to Europe/Prague.
 * `set_google_dns` - if `true`, it will add Google DNS servers to the primary interface. Defaults to false.
 * `create_new_user` - whether you want to also create another user. Defaults to false.
-* `autobrr_version` & `sizechecker_version` - contains the latest [Autobrr](https://github.com/autobrr/autobrr) and [Sizechecker](https://github.com/s0up4200/sizechecker) versions.
+* `autobrr_ver` & `sizechecker_ver` - contains the latest [Autobrr](https://github.com/autobrr/autobrr/releases) and [Sizechecker](https://github.com/s0up4200/sizechecker/releases) versions.
 * `maximum_number_of_open_file_descriptors` - applicable in global, systemd, rtorrent - self explanatory, defaults to 1023.
-* `epel_dl` - URL of the [EPEL](https://docs.fedoraproject.org/en-US/epel/) RPM. Defaults to the RHEL9 EPEL.
-* `libtorrent_dl` - URL of the [libtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
-* `rtorrent_dl` - URL of the [rtorrent](https://github.com/rakshasa/rtorrent/releases) sources.
+* `libtorrent_ver` - Version of the [libtorrent](https://github.com/rakshasa/rtorrent/releases).
+* `rtorrent_ver` - Version of the [rtorrent](https://github.com/rakshasa/rtorrent/releases).
 * `rtorrent_port` - what port should rtorrent listen on. Default is 55442.
 * `rt_memory_max_set` - how much memory should rTorrent use by default. It is using 75% of your total memory by default.
 * `ftp_port` - what port should vsftpd listen on. Default is 55443.
 * `pasv_port_range` - what port range should be used for FTP PASV, by default this is 64000-64321.
 * `single_user` - when `true` only one FTP user will be used and it is the same username who runs this playbook. When `false`, [this](files/vsftpd/users.txt) file is used.
-* `rutorrent_dl` - URL of the [ruTorrent](https://github.com/Novik/ruTorrent) sources.
+* `rutorrent_ver` - Version of the [ruTorrent](https://github.com/Novik/ruTorrent/releases).
 * `https_port` - what port should rutorrent listen on, by default 443.
 * `htpasswd` - HTTP basic password to log in to ruTorrent interface. Default is r3dh4t.
-* `fail2ban_ignore_ipv4` - what IP addresses should be excluded from being banned by Fail2Ban and the same is also used in the **firewalld** limited zone for SSH (only these addresses are allowed to SSH to the seedbox). Whitelisted is arbitrary address `X.X.X.X` and the private IP ranges. You **need** to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L43) to your own!
+* `fail2ban_ignore_ipv4` - what IP addresses should be excluded from being banned by Fail2Ban and the same is also used in the **firewalld** limited zone for SSH (only these addresses are allowed to SSH to the seedbox). Whitelisted is arbitrary address `X.X.X.X` and the private IP ranges. You **need** to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L38) to your own!
 * `require_reboot` - does the machine require reboot after the playbook is finished. It is recommended & default to be true.
 
 _Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user. The ratio defaults should be sufficient (between [400%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L106)-[500%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L105)).
@@ -309,4 +308,4 @@ Author Information
 
 Lucian Maly <<lmaly@redhat.com>>
 
-_Last update: Thu 27 Mar 2025 03:12:33 UTC_
+_Last update: Wed 16 Apr 2025 00:22:34 UTC_
