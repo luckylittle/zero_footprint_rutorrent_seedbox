@@ -160,7 +160,7 @@
 - name: COMMON | 1.15 Unarchive Autobrr
   ansible.builtin.unarchive:
     src: "https://github.com/autobrr/autobrr/releases/download/\
-          v{{ autobrr_version }}/autobrr_{{ autobrr_version }}_\
+          v{{ autobrr_ver }}/autobrr_{{ autobrr_ver }}_\
           linux_x86_64.tar.gz"
     dest: "/home/{{ ansible_user }}"
     remote_src: true
@@ -170,7 +170,7 @@
 - name: COMMON | 1.16 Unarchive Sizechecker
   ansible.builtin.unarchive:
     src: "https://github.com/s0up4200/sizechecker/releases/download/\
-          v{{ sizechecker_version }}/sizechecker_{{ sizechecker_version }}_\
+          v{{ sizechecker_ver }}/sizechecker_{{ sizechecker_ver }}_\
           linux_amd64.tar.gz"
     dest: "/home/{{ ansible_user }}"
     remote_src: true
