@@ -21,7 +21,7 @@
   tags:
     - rtorrent
 
-- name: RTORRENT | 2.2 Unzip the libtorrent & rtorrent sources
+- name: RTORRENT | 2.2 Untar the libtorrent & rtorrent sources
   ansible.builtin.unarchive:
     src: "{{ item }}"
     dest: "~"

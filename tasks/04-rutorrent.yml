@@ -39,7 +39,7 @@
   tags:
     - rutorrent
 
-- name: RUTORRENT | 4.4 Unzip the ruTorrent sources
+- name: RUTORRENT | 4.4 Untar the ruTorrent sources
   ansible.builtin.unarchive:
     src: "{{ rutorrent_dl }}"
     dest: "/var/www/ruTorrent"
