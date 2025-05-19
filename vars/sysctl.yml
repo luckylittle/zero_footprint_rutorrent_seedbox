@@ -118,11 +118,12 @@ sysctl_settings:
   # Defines the ephemeral port range for outgoing connections.
   net.ipv4.ip_local_port_range: "16384 65535"
 
+  # Sets lower threshold for IP fragment memory cleanup.
+  # Low threshold must be applied first, otherwise Invalid argument
+  net.ipv4.ipfrag_low_thresh: "196608"
+
   # Sets upper threshold for IP fragment memory usage.
   net.ipv4.ipfrag_high_thresh: "262144"
-
-  # Sets lower threshold for IP fragment memory cleanup.
-  net.ipv4.ipfrag_low_thresh: "196608"
 
   # Sets the interval for garbage collection of neighbor entries.
   net.ipv4.neigh.default.gc_interval: "30"
@@ -255,11 +256,12 @@ sysctl_settings:
   net.ipv6.conf.default.autoconf: "0"
   net.ipv6.conf.default.forwarding: "0"
 
+  # Sets low threshold for IPv6 fragment memory cleanup.
+  # Low threshold must be applied first, otherwise Invalid argument
+  net.ipv6.ip6frag_low_thresh: "196608"
+
   # Sets high threshold for IPv6 fragment memory usage.
   net.ipv6.ip6frag_high_thresh: "262144"
-
-  # Sets low threshold for IPv6 fragment memory cleanup.
-  net.ipv6.ip6frag_low_thresh: "196608"
 
   # Triggers flush of IPv6 routing table.
   net.ipv6.route.flush: "1"
