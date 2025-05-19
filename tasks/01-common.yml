@@ -196,7 +196,15 @@
   tags:
     - common
 
-- name: COMMON | 1.19 Restore Autobrr & Sizechecker files default SELinux \
+- name: COMMON | 1.19 Add required package policycoreutils-python-utils
+  ansible.builtin.dnf:
+    name: "policycoreutils-python-utils"
+    state: present
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.20 Restore Autobrr & Sizechecker files default SELinux \
         security contexts
   ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
   register: restorecon_usr_local_bin
@@ -205,14 +213,14 @@
   tags:
     - common
 
-- name: COMMON | 1.20 Label an unlabeled port 7474 for Autobrr
+- name: COMMON | 1.21 Label an unlabeled port 7474 for Autobrr
   ansible.builtin.command: "semanage port -a -t http_port_t -p tcp 7474"
   changed_when: true
   become: true
   tags:
     - common
 
-- name: COMMON | 1.21 Add Autobrr backup & upgrade shell script
+- name: COMMON | 1.22 Add Autobrr backup & upgrade shell script
   ansible.builtin.template:
     src: "autobrr/upgrade_autobrr.sh.j2"
     dest: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
@@ -220,7 +228,7 @@
   tags:
     - common
 
-- name: COMMON | 1.22 Add panic shell script
+- name: COMMON | 1.23 Add panic shell script
   ansible.builtin.template:
     src: "common/panic.sh.j2"
     dest: "/usr/local/bin/panic.sh"
@@ -229,7 +237,7 @@
   tags:
     - common
 
-- name: COMMON | 1.23 Systemd wide DefaultLimitNOFILE
+- name: COMMON | 1.24 Systemd wide DefaultLimitNOFILE
   ansible.builtin.lineinfile:
     path: "/etc/systemd/system.conf"
     regexp: '^#DefaultLimitNOFILE=.*'
@@ -238,7 +246,7 @@
   tags:
     - common
 
-- name: COMMON | 1.24 Set soft nofile limit
+- name: COMMON | 1.25 Set soft nofile limit
   ansible.builtin.lineinfile:
     path: "/etc/security/limits.conf"
     line: "* soft nofile \
@@ -248,7 +256,7 @@
   tags:
     - common
 
-- name: COMMON | 1.25 Set hard nofile limit
+- name: COMMON | 1.26 Set hard nofile limit
   ansible.builtin.lineinfile:
     path: "/etc/security/limits.conf"
     line: "* hard nofile \
@@ -258,7 +266,7 @@
   tags:
     - common
 
-- name: COMMON | 1.26 Set various sysctl settings
+- name: COMMON | 1.27 Set various sysctl settings
   ansible.posix.sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
