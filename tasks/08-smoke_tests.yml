@@ -107,7 +107,19 @@
   tags:
     - smoke_tests
 
-- name: TEST | 8.13 Show the smoke test results
+- name: TEST | 8.13 Check for Autobrr healtcheck to be reporting OK
+  ansible.builtin.uri:
+    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/autobrr/api/\
+          healthz/liveness"
+    return_content: true
+    validate_certs: false
+  register: healthz_autobrr
+  failed_when: "'OK' not in healthz_autobrr.content"
+  tags:
+    - smoke_tests
+
+- name: TEST | 8.14 Show the smoke test results
   ansible.builtin.debug:
     msg:
       - "Results:"
@@ -118,16 +130,23 @@
       - "RTORRENT HTTPRPC:  {{ test_rpc.msg }}"
       - "RUTORRENT:         {{ test_https.msg }}"
       - "AUTOBRR:           {{ test_autobrr.msg }}"
+      - "AUTOBRR HEALTHZ:   {{ healthz_autobrr.msg }}"
+      - "########"
   tags:
     - smoke_tests
 
-- name: TEST | 8.14 Output
+- name: TEST | 8.15 Output
   ansible.builtin.debug:
     msg:
       - "----------------------------------------------------------------"
       - "Autobrr URL:"
       - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
           default(ansible_host)) | default(inventory_hostname) }}/autobrr/"
+      - "----------------------------------------------------------------"
+      - "Autobrr Healthz URL:"
+      - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
+          default(ansible_host)) | default(inventory_hostname) }}/autobrr/\
+          api/healthz/liveness"
       - "----------------------------------------------------------------"
       - "ruTorrent URL:"
       - "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
