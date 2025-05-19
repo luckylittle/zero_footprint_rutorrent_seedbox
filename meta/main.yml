@@ -20,10 +20,14 @@ galaxy_info:
       versions:
         - "8"
         - "9"
+    - name: "CentOS"
+      versions:
+        - "9
 
   galaxy_tags:
     - "autobrr"
     - "autodownload"
+    - "centos"
     - "libtorrent"
     - "lightweight"
     - "redhat"
