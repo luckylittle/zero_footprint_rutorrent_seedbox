@@ -233,7 +233,7 @@
 - name: COMMON | 1.23 Set soft nofile limit
   ansible.builtin.lineinfile:
     path: "/etc/security/limits.conf"
-    line: "{{ ansible_user }} soft nofile \
+    line: "* soft nofile \
           {{ maximum_number_of_open_file_descriptors }}"
     insertbefore: '^# End of file$'
   become: true
@@ -243,9 +243,20 @@
 - name: COMMON | 1.24 Set hard nofile limit
   ansible.builtin.lineinfile:
     path: "/etc/security/limits.conf"
-    line: "{{ ansible_user }} hard nofile \
+    line: "* hard nofile \
           {{ maximum_number_of_open_file_descriptors }}"
     insertbefore: '^# End of file$'
   become: true
+  tags:
+    - common
+
+- name: COMMON | 1.25 Set various sysctl settings
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ sysctl_settings | dict2items }}"
+  become: true
+  when: sysctl_tunables
   tags:
     - common
