@@ -1,5 +1,7 @@
+---
 sysctl_settings:
-  # Sets the maximum number of open files system-wide; extremely high value allows virtually unlimited file handles.
+  # Sets the maximum number of open files system-wide; extremely high value
+  # allows virtually unlimited file handles.
   fs.file-max: "9223372036854775807"
 
   # Disables core dumps from setuid programs for security.
@@ -11,16 +13,19 @@ sysctl_settings:
   # Restricts access to kernel symbol addresses to improve security.
   kernel.kptr_restrict: "1"
 
-  # Sets the maximum size of a single message (bytes) in a System V message queue.
+  # Sets the maximum size of a single message (bytes) in a System V message
+  # queue.
   kernel.msgmax: "65535"
 
   # Sets the default maximum size (bytes) of a message queue.
   kernel.msgmnb: "65535"
 
-  # Sets the maximum number of process IDs; 65535 is standard and sufficient for most workloads.
+  # Sets the maximum number of process IDs; 65535 is standard and sufficient
+  # for most workloads.
   kernel.pid_max: "65535"
 
-  # Enables full Address Space Layout Randomization (ASLR) for enhanced memory protection.
+  # Enables full Address Space Layout Randomization (ASLR) for enhanced
+  # memory protection.
   kernel.randomize_va_space: "2"
 
   # Sets total system-wide shared memory pages; suitable for large file caching.
@@ -32,13 +37,15 @@ sysctl_settings:
   # Disables the magic SysRq key for security reasons.
   kernel.sysrq: "0"
 
-  # Uses Fair Queuing (FQ) as the default queuing discipline to improve latency under load.
+  # Uses Fair Queuing (FQ) as the default queuing discipline to improve latency
+  # under load.
   net.core.default_qdisc: "fq"
 
   # Sets the number of packets processed per device poll cycle.
   net.core.dev_weight: "64"
 
-  # Maximum number of packets allowed to queue when the interface receives packets faster than the kernel can process.
+  # Maximum number of packets allowed to queue when the interface receives
+  # packets faster than the kernel can process.
   net.core.netdev_max_backlog: "16384"
 
   # Sets maximum memory per socket buffer for ancillary (control) data.
@@ -47,7 +54,8 @@ sysctl_settings:
   # Default size of receive buffers for network sockets.
   net.core.rmem_default: "262144"
 
-  # Maximum receive buffer size for network sockets; suitable for high-throughput environments.
+  # Maximum receive buffer size for network sockets; suitable for
+  # high-throughput environments.
   net.core.rmem_max: "16777216"
 
   # Sets the maximum number of incoming connections in the backlog queue.
@@ -137,7 +145,8 @@ sysctl_settings:
   # Forces a routing table flush.
   net.ipv4.route.flush: "1"
 
-  # Uses BBR (Bottleneck Bandwidth and Round-trip propagation time) as TCP congestion control algorithm for better throughput.
+  # Uses BBR (Bottleneck Bandwidth and Round-trip propagation time) as
+  # TCP congestion control algorithm for better throughput.
   net.ipv4.tcp_congestion_control: "bbr"
 
   # Enables Explicit Congestion Notification to avoid packet loss.
@@ -267,7 +276,8 @@ sysctl_settings:
   # Sets minimum amount of memory to keep free (in KB).
   vm.min_free_kbytes: "65535"
 
-  # Prevents mmap from mapping below this address, mitigating null pointer dereference attacks.
+  # Prevents mmap from mapping below this address, mitigating null
+  # pointer dereference attacks.
   vm.mmap_min_addr: "4096"
 
   # Controls memory overcommit behavior; '0' is conservative and safer.

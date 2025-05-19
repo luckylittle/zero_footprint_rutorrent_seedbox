@@ -6,6 +6,8 @@ rtorrent_url: "https://github.com/rakshasa/rtorrent/releases/download"
 rutorrent_url: "https://github.com/Novik/ruTorrent/archive/refs/tags"
 
 epel_dl: "{{ epel_url }}/epel-release-latest-9.noarch.rpm"
-libtorrent_dl: "{{ libtorrent_url }}/v{{ libtorrent_ver }}/libtorrent-{{ libtorrent_ver }}.tar.gz"
-rtorrent_dl: "{{ rtorrent_url }}/v{{ rtorrent_ver }}/rtorrent-{{ rtorrent_ver }}.tar.gz"
+libtorrent_dl: "{{ libtorrent_url }}/v{{ libtorrent_ver }}/libtorrent-\
+  {{ libtorrent_ver }}.tar.gz"
+rtorrent_dl: "{{ rtorrent_url }}/v{{ rtorrent_ver }}/rtorrent-{{ rtorrent_ver \
+  }}.tar.gz"
 rutorrent_dl: "{{ rutorrent_url }}/v{{ rutorrent_ver }}.tar.gz"
