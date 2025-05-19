@@ -3,26 +3,27 @@
 
 # 01-common
 set_timezone: "Europe/Prague"
-set_google_dns: false
+set_google_dns: true
 create_new_user: false
 new_user: "redhat"
-autobrr_ver: "1.61.0"
-sizechecker_ver: "1.3.0"
-maximum_number_of_open_file_descriptors: "1023"
+autobrr_ver: "1.62.0"
+sizechecker_ver: "1.4.0"
+maximum_number_of_open_file_descriptors: "65535"
+sysctl_tunables: true
 
 # 02-rtorrent
-libtorrent_ver: "0.15.2"
-rtorrent_ver: "0.15.2"
+libtorrent_ver: "0.15.3"
+rtorrent_ver: "0.15.3"
 rtorrent_port: 55442
 rt_memory_max_set: "{{ ((ansible_memtotal_mb * 3) / 4) | round | int }}M"
 
 # 03-vsftpd
 ftp_port: 55443
 pasv_port_range: "64000-64321"
-single_user: false
+single_user: true
 
 # 04-rutorrent
-rutorrent_ver: "5.1.7"
+rutorrent_ver: "5.2.5"
 https_port: 443
 htpasswd: !vault |
   $ANSIBLE_VAULT;1.1;AES256
@@ -31,8 +32,6 @@ htpasswd: !vault |
   66336562613766346562316132353662346535363364613434323631303165376531373865376636
   3364363065613636370a663231333035383966383938313037313531356163316330633036303665
   6239
-# ^^ An example of the encrypted variable with `ansible-vault encrypt_string`
-# command. The value is `r3dh4t`, password to decrypt is `password1`.
 
 # 05-security
 fail2ban_ignore_ipv4: >-
