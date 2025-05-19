@@ -17,6 +17,7 @@ accesslog.use-syslog = "enable"
 server.event-handler = "linux-sysepoll"
 server.network-backend = "sendfile"
 server.stat-cache-engine = "simple"
+server.stream-response-body = 1
 server.max-connections = 1024
 index-file.names += (
   "index.xhtml", "index.html", "index.htm", "default.htm", "index.php"
