@@ -198,7 +198,7 @@
     - "/var/log/tallylog"
     - "/var/log/tuned/tuned.log"
     - "/var/log/wtmp"
-  when: ansible_facts['ansible_distribution'] == 'RedHat'
+  when: ansible_distribution == 'RedHat'
   tags:
     - cleanup
 
@@ -220,7 +220,7 @@
     - "/var/log/sssd/sssd_kcm.log"
     - "/var/log/tallylog"
     - "/var/log/wtmp"
-  when: ansible_facts['ansible_distribution'] == 'CentOS'
+  when: ansible_distribution == 'CentOS'
   tags:
     - cleanup
 
