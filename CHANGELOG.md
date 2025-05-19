@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-05-19
+
+### Added
+
+- @luckylittle Added: new sysctl_tunables, updated some defaults
+- @luckylittle Added: sysctl_tunables task, updated nofile to all users
+- @luckylittle Added: autobrr healthz endpoint check
+- @luckylittle Added: Massive list of sysctl tunables for a high-performance file servers
+- @luckylittle Added: Support for CentOS Stream release 9
+
+### Changed
+
+- @luckylittle Update: README, added image
+
+### Fixed
+
+- @luckylittle Bugfix: Missing stream-response-body
+- @luckylittle Bugfix: Tar is not always present
+- @luckylittle Bugfix: policycoreutils-python-utils is not everywhere
+- @luckylittle Bugfix: yamllint to PASS, CentOS is the same as EL
+- @luckylittle Bugfix: Accidentally removed comment
+- @luckylittle Bugfix: Changed the order of sysctl thresh keys
+- @luckylittle Bugfix: Ansible facts not found
+- @luckylittle Bugfix: Applying sysctl
+
 ## [2.2.1] - 2025-04-16
 
 ### Changed

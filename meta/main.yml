@@ -10,7 +10,7 @@ galaxy_info:
 
   license: "MIT"
 
-  min_ansible_version: 2.14.17
+  min_ansible_version: 2.16.14
 
   platforms:
     - name: "Fedora"
@@ -24,6 +24,7 @@ galaxy_info:
   galaxy_tags:
     - "autobrr"
     - "autodownload"
+    - "centos"
     - "libtorrent"
     - "lightweight"
     - "redhat"

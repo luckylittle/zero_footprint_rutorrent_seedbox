@@ -198,6 +198,29 @@
     - "/var/log/tallylog"
     - "/var/log/tuned/tuned.log"
     - "/var/log/wtmp"
+  when: ansible_distribution == 'RedHat'
+  tags:
+    - cleanup
+
+- name: CLEANUP | 6.16 Create a symbolic link pointing to \
+        /dev/null for all remaining logs
+  ansible.builtin.file:
+    src: "/dev/null"
+    dest: "{{ item }}"
+    state: "link"
+  become: true
+  loop:
+    - "/var/log/btmp"
+    - "/var/log/dnf.librepo.log"
+    - "/var/log/dnf.log"
+    - "/var/log/dnf.rpm.log"
+    - "/var/log/firewalld"
+    - "/var/log/hawkey.log"
+    - "/var/log/lastlog"
+    - "/var/log/sssd/sssd_kcm.log"
+    - "/var/log/tallylog"
+    - "/var/log/wtmp"
+  when: ansible_distribution == 'CentOS'
   tags:
     - cleanup
 
