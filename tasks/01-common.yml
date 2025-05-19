@@ -266,13 +266,28 @@
   tags:
     - common
 
-- name: COMMON | 1.27 Set various sysctl settings
+- name: COMMON | 1.27 Include sysctl vars
+  ansible.builtin.include_vars: vars/sysctl.yml
+  when: sysctl_tunables
+  tags:
+    - common
+
+- name: COMMON | 1.28 Set various sysctl settings
   ansible.posix.sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
+    sysctl_set: true
+    reload: false
     state: present
   loop: "{{ sysctl_settings | dict2items }}"
   become: true
   when: sysctl_tunables
+  tags:
+    - common
+
+- name: COMMON | 1.29 Reload sysctl
+  ansible.builtin.command: "sysctl -p"
+  changed_when: true
+  become: true
   tags:
     - common
