@@ -98,7 +98,6 @@
         cmd: "set -o pipefail && awk '{if(NR%2!=0)print}' ~/users.txt \
              | grep -v {{ ansible_user }}"
         executable: "/bin/bash"
-      changed_when: true
       become: true
       register: vsftpd_additional_users
 
@@ -129,3 +128,4 @@
         dest: "/etc/pam.d/vsftpd"
         backup: true
         mode: "0644"
+  changed_when: false
