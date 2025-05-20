@@ -178,7 +178,7 @@
     - cleanup
 
 - name: CLEANUP | 6.16 Create a symbolic link pointing to \
-        /dev/null for all remaining logs
+        /dev/null for all remaining logs (Red Hat)
   ansible.builtin.file:
     src: "/dev/null"
     dest: "{{ item }}"
@@ -203,7 +203,7 @@
     - cleanup
 
 - name: CLEANUP | 6.16 Create a symbolic link pointing to \
-        /dev/null for all remaining logs
+        /dev/null for all remaining logs (CentOS)
   ansible.builtin.file:
     src: "/dev/null"
     dest: "{{ item }}"
@@ -233,8 +233,8 @@
     - cleanup
 
 - name: CLEANUP | 6.18 Remove logrotate without dependency (vsftpd)
-  ansible.builtin.command: "sudo rpm -e --nodeps logrotate"  # Removing
-  # logrotate via dnf would remove vsftpd
+  ansible.builtin.command: "rpm -e --nodeps logrotate"
+  # Removing logrotate via dnf would remove vsftpd!
   args:
     removes: "/etc/logrotate.conf"
   become: true
