@@ -38,7 +38,7 @@
                            {{ item | split(\".\") | first }}.pp"
   args:
     chdir: "/tmp"
-  changed_when: true
+    creates: "/tmp/{{ item | split('.') | first }}.pp"
   loop:
     - "rutorrent.te"
     - "tmux.te"
@@ -46,10 +46,10 @@
     - security
 
 - name: SECURITY | 5.5 Install the SELinux modules
-  ansible.builtin.command: "semodule -i {{ item }}"
-  args:
-    chdir: "/tmp"
-  changed_when: true
+  community.general.selinux_module:
+    name: "{{ item | split('.') | first }}"
+    path: "/tmp/{{ item }}"
+    state: present
   become: true
   loop:
     - "rutorrent.pp"
@@ -248,6 +248,9 @@
     path: "/etc/fail2ban/fail2ban.conf"
     regexp: '^logtarget =.*'
     line: "logtarget = SYSTEMD-JOURNAL"
+    owner: root
+    group: root
+    mode: "0644"
   become: true
   tags:
     - security
