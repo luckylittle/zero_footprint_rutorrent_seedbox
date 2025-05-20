@@ -74,11 +74,12 @@
 
 - name: TEST | 8.10 Check for RPC rtorrent endpoint to be open
   ansible.builtin.uri:
-    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
-          default(ansible_host)) | default(inventory_hostname) }}/plugins/\
-          httprpc/action.php"
+    url: "https://{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}/plugins/httprpc/action.php"
     return_content: true
     validate_certs: false
+    url_username: "{{ ansible_user }}"
+    url_password: "{{ htpasswd }}"
+    force_basic_auth: true
   register: test_rpc
   failed_when: "'false' not in test_rpc.content"
   tags:
@@ -86,11 +87,12 @@
 
 - name: TEST | 8.11 Check for HTTPS rutorrent port to be open
   ansible.builtin.uri:
-    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
-          default(ansible_host)) | default(inventory_hostname) }}:{{ \
-          https_port }}"
+    url: "https://{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}:{{ https_port }}"
     return_content: true
     validate_certs: false
+    url_username: "{{ ansible_user }}"
+    url_password: "{{ htpasswd }}"
+    force_basic_auth: true
   register: test_https
   failed_when: "'rTorrent' not in test_https.content"
   tags:
@@ -98,10 +100,12 @@
 
 - name: TEST | 8.12 Check for Autobrr to be responding
   ansible.builtin.uri:
-    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
-          default(ansible_host)) | default(inventory_hostname) }}/autobrr/"
+    url: "https://{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}/autobrr/"
     return_content: true
     validate_certs: false
+    url_username: "{{ ansible_user }}"
+    url_password: "{{ htpasswd }}"
+    force_basic_auth: true
   register: test_autobrr
   failed_when: "'autobrr' not in test_autobrr.content"
   tags:
@@ -109,11 +113,12 @@
 
 - name: TEST | 8.13 Check for Autobrr healtcheck to be reporting OK
   ansible.builtin.uri:
-    url: "https://{{ ansible_user }}:{{ htpasswd }}@{{ (ansible_ssh_host | \
-          default(ansible_host)) | default(inventory_hostname) }}/autobrr/api/\
-          healthz/liveness"
+    url: "https://{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}/autobrr/api/healthz/liveness"
     return_content: true
     validate_certs: false
+    url_username: "{{ ansible_user }}"
+    url_password: "{{ htpasswd }}"
+    force_basic_auth: true
   register: healthz_autobrr
   failed_when: "'OK' not in healthz_autobrr.content"
   tags:
