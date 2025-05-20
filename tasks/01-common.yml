@@ -213,9 +213,12 @@
   tags:
     - common
 
-- name: COMMON | 1.21 Label an unlabeled port 7474 for Autobrr
-  ansible.builtin.command: "semanage port -a -t http_port_t -p tcp 7474"
-  changed_when: true
+- name: COMMON | 1.21 Ensure port 7474 is labeled with http_port_t for Autobrr
+  community.general.seport:
+    ports: "7474"
+    proto: "tcp"
+    setype: "http_port_t"
+    state: present
   become: true
   tags:
     - common
