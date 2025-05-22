@@ -27,7 +27,7 @@
 
 - name: REBOOT | 7.3 Reboot a machine
   ansible.builtin.reboot:
-    reboot_timeout: 1200
+    reboot_timeout: "{{ reboot_timeout }}"
   become: true
   when: require_reboot
   tags:

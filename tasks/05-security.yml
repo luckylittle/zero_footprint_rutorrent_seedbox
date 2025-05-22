@@ -7,8 +7,8 @@
     state: present
   become: true
   loop:
-    - "firewalld"
     - "fail2ban"
+    - "firewalld"
     - "policycoreutils-devel"
   tags:
     - security
@@ -38,7 +38,7 @@
                            {{ item | split(\".\") | first }}.pp"
   args:
     chdir: "/tmp"
-  changed_when: true
+    creates: "/tmp/{{ item | split('.') | first }}.pp"
   loop:
     - "rutorrent.te"
     - "tmux.te"
@@ -86,7 +86,7 @@
   become: true
   notify:
     - "Reload firewalld"
-  loop: "{{ fail2ban_ignore_ipv4 | replace('\"', '') | split(' ') }}"
+  loop: "{{ fail2ban_ignore_ipv4 | split(' ') }}"
   tags:
     - security
 
@@ -176,15 +176,15 @@
   notify:
     - "Reload firewalld"
   loop:
-    - https
-    - ssh
+    - "https"
+    - "ssh"
   tags:
     - security
 
 - name: SECURITY | 5.15 Template the configuration for SSHD
   ansible.builtin.template:
     src: "sshd/sshd_config.j2"
-    dest: "/etc/ssh/sshd_config"
+    dest: "{{ sshd_config_file }}"
     backup: true
     mode: "0600"
   become: true
@@ -196,9 +196,11 @@
 - name: SECURITY | 5.16 Copy the configuration for Fail2Ban (jail)
   ansible.builtin.copy:
     src: "fail2ban/jail.local"
-    dest: "/etc/fail2ban/jail.local"
+    dest: "{{ fail2ban_jail_local_file }}"
     backup: true
     mode: "0644"
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security
@@ -206,9 +208,11 @@
 - name: SECURITY | 5.17 Copy the configuration for Fail2Ban (lighttpd)
   ansible.builtin.copy:
     src: "fail2ban/lighttpd-auth.local"
-    dest: "/etc/fail2ban/jail.d/lighttpd-auth.local"
+    dest: "{{ fail2ban_jail_lighttpd_file }}"
     backup: true
     mode: "0644"
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security
@@ -216,9 +220,11 @@
 - name: SECURITY | 5.18 Copy the configuration for Fail2Ban (sshd)
   ansible.builtin.copy:
     src: "fail2ban/sshd.local"
-    dest: "/etc/fail2ban/jail.d/sshd.local"
+    dest: "{{ fail2ban_sshd_local_file }}"
     backup: true
     mode: "0644"
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security
@@ -226,28 +232,37 @@
 - name: SECURITY | 5.19 Template the configuration for Fail2Ban (vsftpd)
   ansible.builtin.template:
     src: "fail2ban/vsftpd.local.j2"
-    dest: "/etc/fail2ban/jail.d/vsftpd.local"
+    dest: "{{ fail2ban_vsftpd_local_file }}"
     backup: true
     mode: "0644"
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.20 Make exceptions for some IP addresses for Fail2Ban
   ansible.builtin.lineinfile:
-    path: "/etc/fail2ban/jail.conf"
+    path: "{{ fail2ban_jail_config_file }}"
     regexp: '^#ignoreip = 127.0.0.1/8 ::1$'
     line: "ignoreip = {{ fail2ban_ignore_ipv4 }}"
     backup: true
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security
 
 - name: SECURITY | 5.21 Change logging of Fail2Ban to systemd
   ansible.builtin.lineinfile:
-    path: "/etc/fail2ban/fail2ban.conf"
+    path: "{{ fail2ban_config_file }}"
     regexp: '^logtarget =.*'
     line: "logtarget = SYSTEMD-JOURNAL"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security
@@ -255,9 +270,11 @@
 - name: SECURITY | 5.22 Copy the filter for Fail2Ban (lighttpd-auth)
   ansible.builtin.copy:
     src: "fail2ban/lighttpd-auth.conf"
-    dest: "/etc/fail2ban/filter.d/lighttpd-auth.conf"
+    dest: "{{ fail2ban_lighttpd_config_file }}"
     backup: true
     mode: "0644"
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security
@@ -265,9 +282,11 @@
 - name: SECURITY | 5.23 Copy the filter for Fail2Ban (vsftpd)
   ansible.builtin.copy:
     src: "fail2ban/vsftpd.conf"
-    dest: "/etc/fail2ban/filter.d/vsftpd.conf"
+    dest: "{{ fail2ban_vsftpd_config_file }}"
     backup: true
     mode: "0644"
+  notify:
+    - "Restart fail2ban"
   become: true
   tags:
     - security

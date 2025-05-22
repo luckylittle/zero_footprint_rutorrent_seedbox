@@ -1,13 +1,139 @@
 ---
 # vars file for ansible-role-zero-footprint-ruT-seedbox
-epel_url: "https://dl.fedoraproject.org/pub/epel"
-libtorrent_url: "https://github.com/rakshasa/rtorrent/releases/download"
-rtorrent_url: "https://github.com/rakshasa/rtorrent/releases/download"
-rutorrent_url: "https://github.com/Novik/ruTorrent/archive/refs/tags"
 
+# 01-common
+create_folders:
+  - ".Session"
+  - "site"
+  - "site/.WatchAPPZ"
+  - "site/.WatchGAMES"
+  - "site/.WatchMISC"
+  - "site/.WatchMP3"
+  - "site/.WatchTV-HD"
+  - "site/.WatchTV-SD"
+  - "site/.WatchMOVIES-HD"
+  - "site/.WatchMOVIES-SD"
+  - "site/.WatchXXX"
+  - "site/APPZ"
+  - "site/GAMES"
+  - "site/MISC"
+  - "site/MP3"
+  - "site/TV-HD"
+  - "site/TV-SD"
+  - "site/MOVIES-HD"
+  - "site/MOVIES-SD"
+  - "site/XXX"
+  - "site/UPLOAD"
+autobrr_service_file: "/etc/systemd/system/autobrr@.service"
+autobrr_config_file: "/home/{{ ansible_user }}/.config/autobrr/config.toml"
+autobrr_url: "https://github.com/autobrr/autobrr/releases/download"
+sizechecker_url: "https://github.com/s0up4200/sizechecker/releases/download"
+upgrade_autobrr_file: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
+panic_file: "/usr/local/bin/panic.sh"
+maximum_number_of_open_file_descriptors: "65535"
+
+# 02-rtorrent
+epel_url: "https://dl.fedoraproject.org/pub/epel"
 epel_dl: "{{ epel_url }}/epel-release-latest-9.noarch.rpm"
+libtorrent_url: "https://github.com/rakshasa/rtorrent/releases/download"
 libtorrent_dl: "{{ libtorrent_url }}/v{{ libtorrent_ver }}/libtorrent-\
   {{ libtorrent_ver }}.tar.gz"
+rtorrent_url: "https://github.com/rakshasa/rtorrent/releases/download"
 rtorrent_dl: "{{ rtorrent_url }}/v{{ rtorrent_ver }}/rtorrent-{{ rtorrent_ver \
   }}.tar.gz"
+rtorrent_config_file: "/home/{{ ansible_user }}/.rtorrent.rc"
+rtorrent_service_file: "/etc/systemd/system/rtorrent.service"
+rt_memory_max_set: "{{ ((ansible_memtotal_mb * 3) / 4) | round | int }}M"
+ratio_min: 4
+ratio_max: 5
+
+# 03-vsftpd
+public_ip_checker: "http://icanhazip.com"
+vsftpd_private_key_path: "/etc/ssl/private/vsftpd.key"
+vsftpd_request_key_path: "/etc/ssl/private/vsftpd.csr"
+vsftpd_public_key_path: "/etc/ssl/private/vsftpd.pem"
+vsftpd_cert_country: "US"
+vsftpd_cert_org: "RH"
+vsftpd_cert_ou: "RH"
+vsftpd_cert_email: "none@none.none"
+vsftpd_config_file: "/etc/vsftpd/vsftpd.conf"
+vsftpd_pam_config_file: "/etc/pam.d/vsftpd"
+
+# 04-rutorrent
+rutorrent_path: "/var/www/ruTorrent"
+rutorrent_url: "https://github.com/Novik/ruTorrent/archive/refs/tags"
 rutorrent_dl: "{{ rutorrent_url }}/v{{ rutorrent_ver }}.tar.gz"
+rutorrent_disabled_plugins:
+  - "_cloudflare"
+  - "autotools"
+  - "dump"
+  - "extratio"
+  - "extsearch"
+  - "feeds"
+  - "filedrop"
+  - "geoip"
+  - "history"
+  - "ipad"
+  - "lookat"
+  - "mediainfo"
+  - "ratio"
+  - "rss"
+  - "rssurlrewrite"
+  - "screenshots"
+  - "spectrogram"
+  - "throttle"
+  - "unpack"
+  - "uploadeta"
+  - "xmpp"
+phpfpm_config_file: "/etc/php-fpm.d/www.conf"
+lighttpd_config_file: "/etc/lighttpd/lighttpd.conf"
+lighttpd_modules_config_file: "/etc/lighttpd/modules.conf"
+lighttpd_auth_config_file: "/etc/lighttpd/conf.d/auth.conf"
+lighttpd_fastcgi_config_file: "/etc/lighttpd/conf.d/fastcgi.conf"
+lighttpd_proxy_config_file: "/etc/lighttpd/conf.d/proxy.conf"
+
+# 05-security
+sshd_config_file: "/etc/ssh/sshd_config"
+fail2ban_jail_local_file: "/etc/fail2ban/jail.local"
+fail2ban_jail_lighttpd_file: "/etc/fail2ban/jail.d/lighttpd-auth.local"
+fail2ban_sshd_local_file: "/etc/fail2ban/jail.d/sshd.local"
+fail2ban_vsftpd_local_file: "/etc/fail2ban/jail.d/vsftpd.local"
+fail2ban_jail_config_file: "/etc/fail2ban/jail.conf"
+fail2ban_config_file: "/etc/fail2ban/fail2ban.conf"
+fail2ban_lighttpd_config_file: "/etc/fail2ban/filter.d/lighttpd-auth.conf"
+fail2ban_vsftpd_config_file: "/etc/fail2ban/filter.d/vsftpd.conf"
+
+# 06-cleanup
+selinux_modules_junk:
+  - "rutorrent.fc"
+  - "rutorrent.if"
+  - "rutorrent.pp"
+  - "rutorrent.te"
+  - "tmux.fc"
+  - "tmux.if"
+  - "tmux.pp"
+  - "tmux.te"
+journald_config_file: "/etc/systemd/journald.conf"
+rhsm_config_file: "/etc/rhsm/rhsm.conf"
+dnf_config_file: "/etc/dnf/dnf.conf"
+centos_logs:
+  - "/var/log/btmp"
+  - "/var/log/dnf.librepo.log"
+  - "/var/log/dnf.log"
+  - "/var/log/dnf.rpm.log"
+  - "/var/log/firewalld"
+  - "/var/log/hawkey.log"
+  - "/var/log/lastlog"
+  - "/var/log/sssd/sssd_kcm.log"
+  - "/var/log/tallylog"
+  - "/var/log/wtmp"
+rhel_logs: "{{ centos_logs + \
+            ['/var/log/rhsm/rhsm.log', \
+            '/var/log/rhsm/rhsmcertd.log', \
+            '/var/log/tuned/tuned.log'] }}"
+
+# 07-reboot
+reboot_timeout: 1200
+
+# 08-smoke_tests
+test_timeout: 15

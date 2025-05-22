@@ -1,19 +1,49 @@
 ---
 # handlers file for ansible-role-zero-footprint-ruT-seedbox
-- name: Reload firewalld
-  ansible.builtin.command: "firewall-cmd --reload"
-  become: true
-  register: firewallcmd_reload
-  changed_when: firewallcmd_reload.stdout == "success"
 
-- name: Restart journal
-  ansible.builtin.systemd_service:
-    state: "restarted"
-    name: "systemd-journald"
+# 03-vsftpd
+- name: Generate login database
+  ansible.builtin.command: "db_load -T -t hash -f \
+            /home/{{ ansible_user }}/users.txt /etc/vsftpd/login.db"
+  args:
+    creates: "/etc/vsftpd/login.db"
+  when: "copy_users_txt_result.changed"
+
+# 04-rutorrent
+- name: Reload php-fpm
+  ansible.builtin.systemd:
+    name: "php-fpm"
+    state: "reloaded"
+  become: true
+
+- name: Reload lighttpd
+  ansible.builtin.systemd:
+    name: "lighttpd"
+    state: "reloaded"
+  become: true
+
+# 05-security
+- name: Reload firewalld
+  ansible.builtin.systemd:
+    name: "firewalld"
+    state: "reloaded"
   become: true
 
 - name: Reload sshd
-  ansible.builtin.systemd_service:
-    state: "reloaded"
+  ansible.builtin.systemd:
     name: "sshd"
+    state: "reloaded"
+  become: true
+
+- name: Restart fail2ban
+  ansible.builtin.systemd:
+    name: "fail2ban"
+    state: "restarted"
+  become: true
+
+# 06-cleanup
+- name: Restart systemd-journald
+  ansible.builtin.systemd:
+    name: "systemd-journald"
+    state: "restarted"
   become: true

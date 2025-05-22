@@ -8,14 +8,12 @@ create_new_user: false
 new_user: "redhat"
 autobrr_ver: "1.62.0"
 sizechecker_ver: "1.4.0"
-maximum_number_of_open_file_descriptors: "65535"
 sysctl_tunables: true
 
 # 02-rtorrent
 libtorrent_ver: "0.15.3"
 rtorrent_ver: "0.15.3"
 rtorrent_port: 55442
-rt_memory_max_set: "{{ ((ansible_memtotal_mb * 3) / 4) | round | int }}M"
 
 # 03-vsftpd
 ftp_port: 55443
@@ -37,7 +35,7 @@ htpasswd: !vault |
 
 # 05-security
 fail2ban_ignore_ipv4: >-
-  "127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 172.16.0.0/12 X.X.X.X"
+  127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 172.16.0.0/12 X.X.X.X
 
 # 07-reboot
 require_reboot: true

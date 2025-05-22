@@ -1,0 +1,36 @@
+---
+# tasks file for ansible-role-zero-footprint-ruT-seedbox/00-preflight
+
+- name: PREFLIGHT | 0.1 Ensure 'fail2ban_ignore_ipv4' does not contain \
+        placeholder 'X.X.X.X'
+  ansible.builtin.fail:
+    msg: >-
+      The 'fail2ban_ignore_ipv4' variable contains a placeholder (X.X.X.X).
+      Please replace it with a valid IPv4 address first!
+  when: "'X.X.X.X' in fail2ban_ignore_ipv4"
+  tags:
+    - common
+
+- name: PREFLIGHT | 0.2 Get status of local users.txt file for vsftpd
+  ansible.builtin.stat:
+    path: "{{ ansible_role_name }}/files/vsftpd/users.txt"
+  register: users_txt_stat_result
+  delegate_to: localhost
+  run_once: true
+  when: not single_user
+  tags:
+    - common
+
+- name: PREFLIGHT | 0.3 Ensure users.txt exists and is not empty for \
+        multi-user vsftpd setup
+  ansible.builtin.fail:
+    msg: >-
+      For multi-user vsftpd setup (when single_user is false),
+      the file 'files/vsftpd/users.txt' must exist and not be empty.
+      Please add users and passwords to this file!
+  when:
+    - not single_user
+    - not users_txt_stat_result.stat.exists or
+      users_txt_stat_result.stat.size == 0
+  tags:
+    - common

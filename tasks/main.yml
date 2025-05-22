@@ -1,5 +1,11 @@
 ---
 # tasks file for ansible-role-zero-footprint-ruT-seedbox/main
+
+- name: MAIN | 0.0 Include 00-preflight.yml
+  ansible.builtin.include_tasks: "00-preflight.yml"
+  tags:
+    - common
+
 - name: MAIN | 1.0 Include 01-common.yml
   ansible.builtin.include_tasks: "01-common.yml"
   tags:

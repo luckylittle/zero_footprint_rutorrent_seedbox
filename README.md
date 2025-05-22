@@ -21,7 +21,7 @@ Requirements
 Role Variables
 --------------
 
-Default variables `defaults/main.yml` are:
+[Default variables](defaults/main.yml) are:
 
 Common (section 1):
 
@@ -29,45 +29,47 @@ Common (section 1):
 * `set_google_dns` - if `true`, it will add Google DNS servers to the primary interface. Defaults to true.
 * `create_new_user` - whether you want to also create another user. Defaults to false. Relevant to the `new_user` variable.
 * `autobrr_ver` & `sizechecker_ver` - contains the latest [Autobrr](https://github.com/autobrr/autobrr/releases) and [Sizechecker](https://github.com/s0up4200/sizechecker/releases) versions. This gets regularly updated after tests.
-* `maximum_number_of_open_file_descriptors` - applicable in global, systemd, rtorrent - self explanatory, defaults to 65535.
 * `sysctl_tunables` - on/off for various tuning options in [sysctl.yml](vars/sysctl.yml). Default is on.
+
+_Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user.
 
 rTorrent (section 2):
 
 * `libtorrent_ver` - Version of the [libtorrent](https://github.com/rakshasa/rtorrent/releases). It should be identical to `rtorrent_ver`.
 * `rtorrent_ver` - Version of the [rtorrent](https://github.com/rakshasa/rtorrent/releases). It should be identical to `libtorrent_ver`.
-* `rtorrent_port` - what port should rtorrent listen on. Default is 55442.
-* `rt_memory_max_set` - how much memory should rTorrent use? By design, it is using 75% of your total memory by default (e.g. on 32GB RAM machine, this would automatically be 23708M). But it can be overwritten to a static value.
+* `rtorrent_port` - what port should rtorrent listen on. Default is **55442**.
+
+_Note:_ The ratio defaults should be sufficient (between [400%](vars/main.yml#L47)-[500%](vars/main.yml#L48)).
 
 vsFTPd (section 3):
 
-* `ftp_port` - what port should vsftpd listen on. Default is 55443.
-* `pasv_port_range` - what port range should be used for FTP PASV, by default this is 64000-64321.
-* `single_user` - when `true` only one FTP user will be used and it is the same username who runs this playbook. When `false`, [this](files/vsftpd/users.txt) file is used. This is now true by default.
+* `ftp_port` - what port should vsftpd listen on. Default is **55443**.
+* `pasv_port_range` - what port range should be used for FTP PASV, by default this is **64000-64321**.
+* `single_user` - when `true` only one FTP user will be used and it is the same username who runs this playbook. :warning: When `false`, [this](files/vsftpd/users.txt) file is used, update accordingly :warning: This is now true by default.
 
 ruTorrent (section 4):
 
 * `rutorrent_ver` - Version of the [ruTorrent](https://github.com/Novik/ruTorrent/releases).
-* `https_port` - what port should rutorrent listen on, by default HTTPS (443).
-* `htpasswd` - HTTP basic password to log in to ruTorrent interface. Default is r3dh4t. It is recommended to change this to your own.
+* `https_port` - what port should rutorrent listen on, by default HTTPS (**443**).
+* `htpasswd` - HTTP basic password to log in to ruTorrent interface. Default is r3dh4t. :warning: It is recommended to change this to your own :warning:
 
 Security (section 5):
 
-* `fail2ban_ignore_ipv4` - what IP addresses should be excluded from being banned by Fail2Ban, and the same value is also used in the **firewalld** limited zone for SSH (only these specified addresses are allowed to SSH to the seedbox). Whitelisted is arbitrary address `X.X.X.X` and the private IP ranges. You **need** to [change it](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/defaults/main.yml#L40) to your own!
+* `fail2ban_ignore_ipv4` - what IP addresses should be excluded from being banned by Fail2Ban, and the same value is also used in the **firewalld** limited zone for SSH (only these specified addresses are allowed to SSH to the seedbox). Whitelisted is arbitrary address `X.X.X.X` and the private IP ranges. :warning: You **need** to [change it](defaults/main.yml#L38) to your own :warning:
 
 Reboot (section 7):
 
 * `require_reboot` - does the machine require reboot after the playbook is finished. It is recommended & default to be true.
 
-_Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user. The ratio defaults should be sufficient (between [400%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L106)-[500%](https://github.com/luckylittle/zero_footprint_rutorrent_seedbox/blob/master/templates/rtorrent/rtorrent.rc.j2#L105)).
+[Role variables](vars/main.yml) are also tunable, but it is not recommended to change them unless you know what you are doing.
 
 Dependencies
 ------------
 
-- Ansible core v`2.16.14`
-- community.general v`10.6.0` (Install: `ansible-galaxy collection install community.general`)
-- community.crypto v`2.26.1` (Install: `ansible-galaxy collection install community.crypto`)
-- ansible.posix v`2.0.0` (Install: `ansible-galaxy collection install ansible.posix`)
+* Ansible core v`2.16.14`
+* community.general v`10.6.0` (Install: `ansible-galaxy collection install community.general`)
+* community.crypto v`2.26.1` (Install: `ansible-galaxy collection install community.crypto`)
+* ansible.posix v`2.0.0` (Install: `ansible-galaxy collection install ansible.posix`)
 
 Example Playbook
 ----------------
@@ -92,24 +94,23 @@ Example Playbook
 Testing
 -------
 
-|OS     |Test passed       |
-|-------|------------------|
-|RHEL9  |:white_check_mark:|
-|CentOS9|:white_check_mark:|
+|OS     |Version 2.3.0     |Version 2.3.1     |
+|-------|------------------|------------------|
+|RHEL9  |:white_check_mark:|:white_check_mark:|
+|CentOS9|:white_check_mark:|Not attempted     |
 
 On a brand new RHEL8.6, 1x vCPU, 4GB RAM playbook took 18m 32s to finish on VirtualBox.
 On a brand new Red Hat Enterprise Linux release 9.5 (Plow) on AWS (t3.medium), it took 18m 29s.
-The following versions were installed during the RHEL9 test:
+The following versions were installed during the last RHEL9 test:
 
-|package name|package version      |
+|Package name|Package version      |
 |------------|---------------------|
 |fail2ban    |1.1.0-6.el9.noarch   |
-|libdb-utils |5.3.28-54.el9.x86_64 |
+|libdb-utils |5.3.28-55.el9.x86_64 |
 |lighttpd    |1.4.67-1.el9.x86_64  |
 |php         |8.0.30-1.el9_2.x86_64|
 |tmux        |3.2a-5.el9.x86_64    |
 |vsftpd      |3.0.5-6.el9.x86_64   |
-
 
 The following Terraform can be used to create necessary infrastructure (based on RHEL9.X on AWS):
 
@@ -340,4 +341,4 @@ Author Information
 
 Lucian Maly <<lmaly@redhat.com>>
 
-_Last update: Mon 19 May 2025 05:56:21 UTC_
+_Last update: Thu 22 May 2025 05:40:49 UTC_

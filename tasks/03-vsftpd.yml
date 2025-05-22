@@ -7,9 +7,9 @@
     state: present
   become: true
   loop:
+    - "libdb-utils"
     - "python3-cryptography"
     - "vsftpd"
-    - "libdb-utils"
   tags:
     - vsftpd
 
@@ -24,8 +24,9 @@
 
 - name: VSFTPD | 3.3 Determine public IPv4 address
   ansible.builtin.uri:
-    url: "http://icanhazip.com"
+    url: "{{ public_ip_checker }}"
     return_content: true
+  changed_when: false
   register: public_ip
   tags:
     - vsftpd
@@ -39,7 +40,7 @@
 
 - name: VSFTPD | 3.5 Create private key (RSA, 4096 bits)
   community.crypto.openssl_privatekey:
-    path: "/etc/ssl/private/vsftpd.key"
+    path: "{{ vsftpd_private_key_path }}"
   become: true
   tags:
     - vsftpd
@@ -47,12 +48,12 @@
 - name: VSFTPD | 3.6 Generate an OpenSSL Certificate \
         Signing Request with Subject information
   community.crypto.openssl_csr:
-    path: "/etc/ssl/private/vsftpd.csr"
-    privatekey_path: "/etc/ssl/private/vsftpd.key"
-    country_name: "US"
-    organization_name: "RH"
-    organizational_unit_name: "RH"
-    email_address: "none@none.none"
+    path: "{{ vsftpd_request_key_path }}"
+    privatekey_path: "{{ vsftpd_private_key_path }}"
+    country_name: "{{ vsftpd_cert_country }}"
+    organization_name: "{{ vsftpd_cert_org }}"
+    organizational_unit_name: "{{ vsftpd_cert_ou }}"
+    email_address: "{{ vsftpd_cert_email }}"
     common_name: "{{ ansible_public_ipv4 }}"
     backup: true
   become: true
@@ -61,9 +62,9 @@
 
 - name: VSFTPD | 3.7 Generate a Self Signed OpenSSL certificate
   community.crypto.x509_certificate:
-    path: "/etc/ssl/private/vsftpd.pem"
-    privatekey_path: "/etc/ssl/private/vsftpd.key"
-    csr_path: "/etc/ssl/private/vsftpd.csr"
+    path: "{{ vsftpd_public_key_path }}"
+    privatekey_path: "{{ vsftpd_private_key_path }}"
+    csr_path: "{{ vsftpd_request_key_path }}"
     provider: "selfsigned"
     backup: true
   become: true
@@ -73,7 +74,7 @@
 - name: VSFTPD | 3.8 Template the configuration for vsftpd
   ansible.builtin.template:
     src: "vsftpd/vsftpd.conf.j2"
-    dest: "/etc/vsftpd/vsftpd.conf"
+    dest: "{{ vsftpd_config_file }}"
     mode: "0600"
     backup: true
   become: true
@@ -89,18 +90,22 @@
     - name: VSFTPD | 3.9.1 Copy the users.txt
       ansible.builtin.copy:
         src: "vsftpd/users.txt"
-        dest: "~"
+        dest: "/home/{{ ansible_user }}"
         mode: "0644"
+      register: "copy_users_txt_result"
+      notify:
+        - "Generate login database"
 
     - name: VSFTPD | 3.9.2 Get only the users from \
             users.txt, except for ansible_user
       ansible.builtin.shell:
-        cmd: "set -o pipefail && awk '{if(NR%2!=0)print}' ~/users.txt \
-             | grep -v {{ ansible_user }}"
+        cmd: "set -o pipefail && awk '{if(NR%2!=0)print}' /home/{{ \
+              ansible_user }}/users.txt | grep -Fxv {{ ansible_user }} \
+              || true"
         executable: "/bin/bash"
-      changed_when: true
       become: true
-      register: vsftpd_additional_users
+      changed_when: false
+      register: "vsftpd_additional_users_output"
 
     - name: VSFTPD | 3.9.3 Add users from users.txt without ability to SSH
       ansible.builtin.user:
@@ -110,22 +115,17 @@
         group: "{{ ansible_user }}"
         shell: "/sbin/nologin"
       become: true
-      loop: "{{ vsftpd_additional_users.stdout | split('\n') }}"
+      loop: "{{ vsftpd_additional_users_output.stdout_lines }}"
+      when: "item | length > 0"
 
-    - name: VSFTPD | 3.9.4 Generate login database
-      ansible.builtin.command: db_load -T -t hash -f \
-                                ~/users.txt /etc/vsftpd/login.db
-      args:
-        creates: "/etc/vsftpd/login.db"
-
-    - name: VSFTPD | 3.9.5 Remove unnecessary file
+    - name: VSFTPD | 3.9.4 Remove unnecessary file
       ansible.builtin.file:
-        path: "~/users.txt"
+        path: "/home/{{ ansible_user }}/users.txt"
         state: "absent"
 
-    - name: VSFTPD | 3.9.6 Copy the vsftpd configuration for PAM
+    - name: VSFTPD | 3.9.5 Copy the vsftpd configuration for PAM
       ansible.builtin.copy:
         src: "pam/vsftpd"
-        dest: "/etc/pam.d/vsftpd"
+        dest: "{{ vsftpd_pam_config_file }}"
         backup: true
         mode: "0644"

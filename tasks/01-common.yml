@@ -45,28 +45,7 @@
     path: "/home/{{ ansible_user }}/{{ item }}"
     state: "directory"
     mode: "0777"
-  loop:
-    - ".Session"
-    - "site"
-    - "site/.WatchAPPZ"
-    - "site/.WatchGAMES"
-    - "site/.WatchMISC"
-    - "site/.WatchMP3"
-    - "site/.WatchTV-HD"
-    - "site/.WatchTV-SD"
-    - "site/.WatchMOVIES-HD"
-    - "site/.WatchMOVIES-SD"
-    - "site/.WatchXXX"
-    - "site/APPZ"
-    - "site/GAMES"
-    - "site/MISC"
-    - "site/MP3"
-    - "site/TV-HD"
-    - "site/TV-SD"
-    - "site/MOVIES-HD"
-    - "site/MOVIES-SD"
-    - "site/XXX"
-    - "site/UPLOAD"
+  loop: "{{ create_folders }}"
   tags:
     - common
 
@@ -125,7 +104,7 @@
 - name: COMMON | 1.11 Add Autobrr service
   ansible.builtin.template:
     src: "autobrr/autobrr.service.j2"
-    dest: "/etc/systemd/system/autobrr@.service"
+    dest: "{{ autobrr_service_file }}"
     backup: false
     mode: "0644"
   become: true
@@ -152,7 +131,7 @@
 - name: COMMON | 1.14 Add Autobrr configuration file
   ansible.builtin.template:
     src: "autobrr/config.toml.j2"
-    dest: "/home/{{ ansible_user }}/.config/autobrr/config.toml"
+    dest: "{{ autobrr_config_file }}"
     mode: "0644"
   tags:
     - common
@@ -167,7 +146,7 @@
 
 - name: COMMON | 1.16 Unarchive Autobrr
   ansible.builtin.unarchive:
-    src: "https://github.com/autobrr/autobrr/releases/download/\
+    src: "{{ autobrr_url }}/\
           v{{ autobrr_ver }}/autobrr_{{ autobrr_ver }}_\
           linux_x86_64.tar.gz"
     dest: "/home/{{ ansible_user }}"
@@ -177,7 +156,7 @@
 
 - name: COMMON | 1.17 Unarchive Sizechecker
   ansible.builtin.unarchive:
-    src: "https://github.com/s0up4200/sizechecker/releases/download/\
+    src: "{{ sizechecker_url }}/\
           v{{ sizechecker_ver }}/sizechecker_{{ sizechecker_ver }}_\
           linux_amd64.tar.gz"
     dest: "/home/{{ ansible_user }}"
@@ -213,9 +192,12 @@
   tags:
     - common
 
-- name: COMMON | 1.21 Label an unlabeled port 7474 for Autobrr
-  ansible.builtin.command: "semanage port -a -t http_port_t -p tcp 7474"
-  changed_when: true
+- name: COMMON | 1.21 Ensure port 7474 is labeled with http_port_t for Autobrr
+  community.general.seport:
+    ports: "7474"
+    proto: "tcp"
+    setype: "http_port_t"
+    state: present
   become: true
   tags:
     - common
@@ -223,7 +205,7 @@
 - name: COMMON | 1.22 Add Autobrr backup & upgrade shell script
   ansible.builtin.template:
     src: "autobrr/upgrade_autobrr.sh.j2"
-    dest: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
+    dest: "{{ upgrade_autobrr_file }}"
     mode: "0755"
   tags:
     - common
@@ -231,7 +213,7 @@
 - name: COMMON | 1.23 Add panic shell script
   ansible.builtin.template:
     src: "common/panic.sh.j2"
-    dest: "/usr/local/bin/panic.sh"
+    dest: "{{ panic_file }}"
     mode: "0755"
   become: true
   tags:
@@ -267,7 +249,7 @@
     - common
 
 - name: COMMON | 1.27 Include sysctl vars
-  ansible.builtin.include_vars: vars/sysctl.yml
+  ansible.builtin.include_vars: "vars/sysctl.yml"
   when: sysctl_tunables
   tags:
     - common
@@ -277,17 +259,10 @@
     name: "{{ item.key }}"
     value: "{{ item.value }}"
     sysctl_set: true
-    reload: false
+    reload: true
     state: present
   loop: "{{ sysctl_settings | dict2items }}"
   become: true
   when: sysctl_tunables
-  tags:
-    - common
-
-- name: COMMON | 1.29 Reload sysctl
-  ansible.builtin.command: "sysctl -p"
-  changed_when: true
-  become: true
   tags:
     - common
