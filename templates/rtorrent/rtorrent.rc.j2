@@ -102,8 +102,8 @@ schedule2 = watch_directory_9,7,7,"load.start=~/site/.WatchXXX/*.torrent,d.direc
 
 # Ratio limits
 ratio.enable =
-ratio.max.set = 500
-ratio.min.set = 400
+ratio.min.set = {{ ratio_min }}00
+ratio.max.set = {{ ratio_max }}00
 ratio.upload.set = 50M
 method.set = group.seeding.ratio.command,d.close=
 
