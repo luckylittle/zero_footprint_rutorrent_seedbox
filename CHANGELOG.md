@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2025-05-22
+
+### Added
+
+- @luckylittle Added: Preflight tasks
+- @luckylittle Added: Preflight to main tasks
+- @luckylittle Added: Missing handlers
+
+### Changed
+
+- @luckylittle Changed: Moved most static variables to role vars
+- @luckylittle Changed: ratio limits are tunable
+- @luckylittle Changed: Moved some defaults to role vars
+- @luckylittle Changed: 01-common variables to role vars
+- @luckylittle Changed: 02-rtorrent variables to role vars
+- @luckylittle Changed: 03-vsftpd variables to role vars
+- @luckylittle Changed: 04-rutorrent variables to role vars
+- @luckylittle Changed: 05-security variables to role vars
+- @luckylittle Changed: 06-cleanup variables to role vars
+- @luckylittle Changed: 07-reboot variables to role vars
+- @luckylittle Changed: 08-smoke_tests variables to role vars
+- @luckylittle Changed: README.md
+
 ## [2.3.0] - 2025-05-19
 
 ### Added
