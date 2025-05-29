@@ -3,7 +3,7 @@
 
 # 01-common
 create_folders:
-  - ".Session"
+  - ".session"
   - "site"
   - "site/.WatchAPPZ"
   - "site/.WatchGAMES"
@@ -35,6 +35,17 @@ maximum_number_of_open_file_descriptors: "65535"
 # 02-rtorrent
 epel_url: "https://dl.fedoraproject.org/pub/epel"
 epel_dl: "{{ epel_url }}/epel-release-latest-9.noarch.rpm"
+rtorrent_required_rpms:
+  - "{{ epel_dl }}"
+  - "gcc-c++"
+  - "gcc"
+  - "libcurl-devel"
+  - "make"
+  - "ncurses-devel"
+  - "openssl-devel"
+  - "tmux"
+  - "wget"
+  - "zlib-devel"
 libtorrent_url: "https://github.com/rakshasa/rtorrent/releases/download"
 libtorrent_dl: "{{ libtorrent_url }}/v{{ libtorrent_ver }}/libtorrent-\
   {{ libtorrent_ver }}.tar.gz"
@@ -48,6 +59,10 @@ ratio_min: 4
 ratio_max: 5
 
 # 03-vsftpd
+vsftpd_required_rpms:
+  - "libdb-utils"
+  - "python3-cryptography"
+  - "vsftpd"
 public_ip_checker: "http://icanhazip.com"
 vsftpd_private_key_path: "/etc/ssl/private/vsftpd.key"
 vsftpd_request_key_path: "/etc/ssl/private/vsftpd.csr"
@@ -60,6 +75,16 @@ vsftpd_config_file: "/etc/vsftpd/vsftpd.conf"
 vsftpd_pam_config_file: "/etc/pam.d/vsftpd"
 
 # 04-rutorrent
+rutorrent_required_rpms:
+  - "lighttpd-fastcgi"
+  - "lighttpd"
+  - "php-dom"
+  - "php-fpm"
+  - "php-json"
+  - "php-libxml"
+  - "php-mbstring"
+  - "php"
+  - "python3-passlib"
 rutorrent_path: "/var/www/ruTorrent"
 rutorrent_url: "https://github.com/Novik/ruTorrent/archive/refs/tags"
 rutorrent_dl: "{{ rutorrent_url }}/v{{ rutorrent_ver }}.tar.gz"
@@ -93,6 +118,10 @@ lighttpd_fastcgi_config_file: "/etc/lighttpd/conf.d/fastcgi.conf"
 lighttpd_proxy_config_file: "/etc/lighttpd/conf.d/proxy.conf"
 
 # 05-security
+security_required_rpms:
+  - "fail2ban"
+  - "firewalld"
+  - "policycoreutils-devel"
 sshd_config_file: "/etc/ssh/sshd_config"
 fail2ban_jail_local_file: "/etc/fail2ban/jail.local"
 fail2ban_jail_lighttpd_file: "/etc/fail2ban/jail.d/lighttpd-auth.local"
@@ -104,6 +133,28 @@ fail2ban_lighttpd_config_file: "/etc/fail2ban/filter.d/lighttpd-auth.conf"
 fail2ban_vsftpd_config_file: "/etc/fail2ban/filter.d/vsftpd.conf"
 
 # 06-cleanup
+cleanup_junk_rpms:
+  - "*man-pages"
+  - "audit"
+  - "bind*"
+  - "cockpit"
+  - "gcc-c++"
+  - "gcc"
+  - "insights-client"
+  - "kdump"
+  - "langpacks-*"
+  - "libcurl-devel"
+  - "make"
+  - "ncurses-devel"
+  - "openssl-devel"
+  - "policycoreutils-devel"
+  - "python3-cryptography"
+  - "python3-passlib"
+  - "rsyslog"
+  - "sos"
+  - "wireless-tools"
+  - "wpa_supplicant"
+  - "zlib-devel"
 selinux_modules_junk:
   - "rutorrent.fc"
   - "rutorrent.if"
@@ -133,6 +184,15 @@ rhel_logs: "{{ centos_logs + \
             '/var/log/tuned/tuned.log'] }}"
 
 # 07-reboot
+required_services:
+  - "{{ autobrr_service }}"
+  - "fail2ban"
+  - "fstrim.timer"
+  - "lighttpd"
+  - "php-fpm"
+  - "rtorrent"
+  - "tuned"
+  - "vsftpd"
 reboot_timeout: 1200
 
 # 08-smoke_tests
