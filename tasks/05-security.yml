@@ -6,10 +6,7 @@
     name: "{{ item }}"
     state: present
   become: true
-  loop:
-    - "fail2ban"
-    - "firewalld"
-    - "policycoreutils-devel"
+  loop: "{{ security_required_rpms }}"
   tags:
     - security
 

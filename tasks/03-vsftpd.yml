@@ -6,10 +6,7 @@
     name: "{{ item }}"
     state: present
   become: true
-  loop:
-    - "libdb-utils"
-    - "python3-cryptography"
-    - "vsftpd"
+  loop: "{{ vsftpd_required_rpms }}"
   tags:
     - vsftpd
 
