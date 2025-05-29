@@ -182,6 +182,13 @@ rhel_logs: "{{ centos_logs + \
             ['/var/log/rhsm/rhsm.log', \
             '/var/log/rhsm/rhsmcertd.log', \
             '/var/log/tuned/tuned.log'] }}"
+cleanup_junk_services:
+  - "avahi-daemon"
+  - "bluetooth"
+  - "cups"
+  - "ModemManager"
+  - "postfix"
+  - "smartd"
 
 # 07-reboot
 required_services:
