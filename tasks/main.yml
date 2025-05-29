@@ -5,6 +5,7 @@
   ansible.builtin.include_tasks: "00-preflight.yml"
   tags:
     - common
+    - preflight
 
 - name: MAIN | 1.0 Include 01-common.yml
   ansible.builtin.include_tasks: "01-common.yml"
