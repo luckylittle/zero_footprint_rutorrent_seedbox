@@ -1,6 +1,13 @@
 ---
 # handlers file for ansible-role-zero-footprint-ruT-seedbox
 
+# 01-common
+- name: Restart tuned
+  ansible.builtin.systemd:
+    name: "tuned"
+    state: "restarted"
+  become: true
+
 # 03-vsftpd
 - name: Generate login database
   ansible.builtin.command: "db_load -T -t hash -f \
