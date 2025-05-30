@@ -297,3 +297,14 @@
   become: true
   tags:
     - security
+
+- name: SECURITY | 5.25 Configure restricted sudo for ansible_user
+  community.general.sudoers:
+    name: "ansible-{{ ansible_user }}-custom-sudo"
+    user: "{{ ansible_user }}"
+    commands: "{{ restricted_sudo_commands }}"
+    nopassword: true
+    state: "present"
+  become: true
+  tags:
+    - security
