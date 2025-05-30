@@ -266,3 +266,30 @@
   when: sysctl_tunables
   tags:
     - common
+
+- name: COMMON | 1.29 Remount a /home and change atime options
+  ansible.posix.mount:
+    path: "/home"
+    state: "remounted"
+    opts: "noatime,nodiratime"
+    backup: true
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.30 Install dynamic adaptive system tuning daemon
+  ansible.builtin.dnf:
+    name: "tuned"
+    state: present
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.31 Configure tuned for latency-performance
+  ansible.builtin.command: "tuned-adm profile latency-performance"
+  changed_when: true
+  notify:
+    - "Restart tuned"
+  become: true
+  tags:
+    - common
