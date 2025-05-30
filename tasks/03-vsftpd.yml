@@ -89,9 +89,6 @@
         src: "vsftpd/users.txt"
         dest: "/home/{{ ansible_user }}"
         mode: "0644"
-      register: "copy_users_txt_result"
-      notify:
-        - "Generate login database"
 
     - name: VSFTPD | 3.9.2 Get only the users from \
             users.txt, except for ansible_user
@@ -115,12 +112,18 @@
       loop: "{{ vsftpd_additional_users_output.stdout_lines }}"
       when: "item | length > 0"
 
-    - name: VSFTPD | 3.9.4 Remove unnecessary file
+    - name: VSFTPD | 3.9.4 Generate login database
+      ansible.builtin.command: "db_load -T -t hash -f \
+                /home/{{ ansible_user }}/users.txt /etc/vsftpd/login.db"
+      become: true
+      changed_when: true
+
+    - name: VSFTPD | 3.9.5 Remove unnecessary file
       ansible.builtin.file:
         path: "/home/{{ ansible_user }}/users.txt"
         state: "absent"
 
-    - name: VSFTPD | 3.9.5 Copy the vsftpd configuration for PAM
+    - name: VSFTPD | 3.9.6 Copy the vsftpd configuration for PAM
       ansible.builtin.copy:
         src: "pam/vsftpd"
         dest: "{{ vsftpd_pam_config_file }}"

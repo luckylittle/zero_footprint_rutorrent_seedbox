@@ -8,14 +8,6 @@
     state: "restarted"
   become: true
 
-# 03-vsftpd
-- name: Generate login database
-  ansible.builtin.command: "db_load -T -t hash -f \
-            /home/{{ ansible_user }}/users.txt /etc/vsftpd/login.db"
-  args:
-    creates: "/etc/vsftpd/login.db"
-  when: "copy_users_txt_result.changed"
-
 # 04-rutorrent
 - name: Reload php-fpm
   ansible.builtin.systemd:

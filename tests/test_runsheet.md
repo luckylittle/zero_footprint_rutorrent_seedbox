@@ -71,8 +71,9 @@
   - [ ] VSFTPD | 3.9.1 Copy the users.txt
   - [ ] VSFTPD | 3.9.2 Get only the users from
   - [ ] VSFTPD | 3.9.3 Add users from users.txt without ability to SSH
-  - [ ] VSFTPD | 3.9.4 Remove unnecessary file
-  - [ ] VSFTPD | 3.9.5 Copy the vsftpd configuration for PAM
+  - [ ] VSFTPD | 3.9.4 Generate login database
+  - [ ] VSFTPD | 3.9.5 Remove unnecessary file
+  - [ ] VSFTPD | 3.9.6 Copy the vsftpd configuration for PAM
 
 ## 4. RUTORRENT
 
