@@ -1,0 +1,39 @@
+---
+dependency:
+  name: "galaxy"
+driver:
+  options:
+    managed: false
+    login_cmd_template: "podman exec -ti {instance} bash"
+    ansible_connection_options:
+      ansible_connection: "podman"
+platforms:
+  - name: "instance"
+    image: "registry.redhat.io/ubi9:9.6-1747219013"
+    pre_build_image: true
+    privileged: true
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    command: "/usr/sbin/init"
+    tmpfs:
+      - "/run"
+      - "/tmp"
+provisioner:
+  name: "ansible"
+  playbooks:
+    converge: "../../tests/test.yml"
+    verify: "verify.yml"
+  inventory:
+    host_vars:
+      instance:
+        ansible_user: ".placeholder"
+        new_user: ".placeholder"
+        htpasswd: ".placeholder"
+        fail2ban_ignore_ipv4: "127.0.0.1/8 ::1 192.168.0.1/16 10.0.0.0/8 172.16.0.0/12 .placeholder"
+        require_reboot: false
+verifier:
+  name: "ansible"
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
