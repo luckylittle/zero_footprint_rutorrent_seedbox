@@ -1,0 +1,13 @@
+---
+- name: MOLECULE | verify.yml | Verify role's outcome
+  hosts: all
+  become: false
+  gather_facts: true
+  vars:
+    ansible_user: ".placeholder"
+    htpasswd: ".placeholder"
+  tasks:
+    - name: Include smoke tests from the role
+      ansible.builtin.include_role:
+        name: "zero_footprint_rutorrent_seedbox"
+        tasks_from: "08-smoke_tests.yml"
