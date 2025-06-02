@@ -11,8 +11,8 @@ sizechecker_ver: "1.4.0"
 sysctl_tunables: true
 
 # 02-rtorrent
-libtorrent_ver: "0.15.3"
-rtorrent_ver: "0.15.3"
+libtorrent_ver: "0.15.4"
+rtorrent_ver: "0.15.4"
 rtorrent_port: 55442
 
 # 03-vsftpd
@@ -21,7 +21,7 @@ pasv_port_range: "64000-64321"
 single_user: true
 
 # 04-rutorrent
-rutorrent_ver: "5.2.6"
+rutorrent_ver: "5.2.8"
 https_port: 443
 htpasswd: !vault |
   $ANSIBLE_VAULT;1.1;AES256
