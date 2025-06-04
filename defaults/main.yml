@@ -8,6 +8,7 @@ create_new_user: false
 new_user: "redhat"
 autobrr_ver: "1.62.0"
 sizechecker_ver: "1.4.0"
+mkbrr_ver: "1.12.0"
 sysctl_tunables: true
 
 # 02-rtorrent

@@ -164,10 +164,21 @@
   tags:
     - common
 
-- name: COMMON | 1.18 Install Autobrr & Sizechecker binaries
-  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/\
-                            {{ ansible_user }}/autobrrctl \
+- name: COMMON | 1.18 Unarchive Mkbrr
+  ansible.builtin.unarchive:
+    src: "{{ mkbrr_url }}/\
+          v{{ mkbrr_ver }}/mkbrr_{{ mkbrr_ver }}_\
+          linux_x86_64.tar.gz"
+    dest: "/home/{{ ansible_user }}"
+    remote_src: true
+  tags:
+    - common
+
+- name: COMMON | 1.19 Install Autobrr, Mkbrr & Sizechecker binaries
+  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr \
+                            /home/{{ ansible_user }}/autobrrctl \
                             /home/{{ ansible_user }}/sizechecker \
+                            /home/{{ ansible_user }}/mkbrr \
                             /usr/local/bin/"
   args:
     creates: "/usr/local/bin/autobrr"
@@ -175,7 +186,7 @@
   tags:
     - common
 
-- name: COMMON | 1.19 Add required package policycoreutils-python-utils
+- name: COMMON | 1.20 Add required package policycoreutils-python-utils
   ansible.builtin.dnf:
     name: "policycoreutils-python-utils"
     state: present
@@ -183,8 +194,8 @@
   tags:
     - common
 
-- name: COMMON | 1.20 Restore Autobrr & Sizechecker files default SELinux \
-        security contexts
+- name: COMMON | 1.21 Restore Autobrr, Mkbrr & Sizechecker files default \
+        SELinux security contexts
   ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
   register: restorecon_usr_local_bin
   changed_when: "'Relabeled' in restorecon_usr_local_bin.stdout"
@@ -192,7 +203,7 @@
   tags:
     - common
 
-- name: COMMON | 1.21 Ensure port 7474 is labeled with http_port_t for Autobrr
+- name: COMMON | 1.22 Ensure port 7474 is labeled with http_port_t for Autobrr
   community.general.seport:
     ports: "7474"
     proto: "tcp"
@@ -202,7 +213,7 @@
   tags:
     - common
 
-- name: COMMON | 1.22 Add Autobrr backup & upgrade shell script
+- name: COMMON | 1.23 Add Autobrr backup & upgrade shell script
   ansible.builtin.template:
     src: "autobrr/upgrade_autobrr.sh.j2"
     dest: "{{ upgrade_autobrr_file }}"
@@ -210,7 +221,7 @@
   tags:
     - common
 
-- name: COMMON | 1.23 Add panic shell script
+- name: COMMON | 1.24 Add panic shell script
   ansible.builtin.template:
     src: "common/panic.sh.j2"
     dest: "{{ panic_file }}"
@@ -219,7 +230,7 @@
   tags:
     - common
 
-- name: COMMON | 1.24 Systemd wide DefaultLimitNOFILE
+- name: COMMON | 1.25 Systemd wide DefaultLimitNOFILE
   ansible.builtin.lineinfile:
     path: "/etc/systemd/system.conf"
     regexp: '^#DefaultLimitNOFILE=.*'
@@ -228,7 +239,7 @@
   tags:
     - common
 
-- name: COMMON | 1.25 Set soft nofile limit
+- name: COMMON | 1.26 Set soft nofile limit
   ansible.builtin.lineinfile:
     path: "/etc/security/limits.conf"
     line: "* soft nofile \
@@ -238,7 +249,7 @@
   tags:
     - common
 
-- name: COMMON | 1.26 Set hard nofile limit
+- name: COMMON | 1.27 Set hard nofile limit
   ansible.builtin.lineinfile:
     path: "/etc/security/limits.conf"
     line: "* hard nofile \
@@ -248,13 +259,13 @@
   tags:
     - common
 
-- name: COMMON | 1.27 Include sysctl vars
+- name: COMMON | 1.28 Include sysctl vars
   ansible.builtin.include_vars: "vars/sysctl.yml"
   when: sysctl_tunables
   tags:
     - common
 
-- name: COMMON | 1.28 Set various sysctl settings
+- name: COMMON | 1.29 Set various sysctl settings
   ansible.posix.sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
@@ -267,7 +278,7 @@
   tags:
     - common
 
-- name: COMMON | 1.29 Remount a /home and change atime options
+- name: COMMON | 1.30 Remount a /home and change atime options
   ansible.posix.mount:
     path: "/home"
     state: "remounted"
@@ -277,7 +288,7 @@
   tags:
     - common
 
-- name: COMMON | 1.30 Install dynamic adaptive system tuning daemon
+- name: COMMON | 1.31 Install dynamic adaptive system tuning daemon
   ansible.builtin.dnf:
     name: "tuned"
     state: present
@@ -285,7 +296,7 @@
   tags:
     - common
 
-- name: COMMON | 1.31 Configure tuned for latency-performance
+- name: COMMON | 1.32 Configure tuned for latency-performance
   ansible.builtin.command: "tuned-adm profile latency-performance"
   changed_when: true
   notify:

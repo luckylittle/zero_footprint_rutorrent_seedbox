@@ -29,20 +29,21 @@
 - [ ] COMMON | 1.15 Add required package tar
 - [ ] COMMON | 1.16 Unarchive Autobrr
 - [ ] COMMON | 1.17 Unarchive Sizechecker
-- [ ] COMMON | 1.18 Install Autobrr & Sizechecker binaries
-- [ ] COMMON | 1.19 Add required package policycoreutils-python-utils
-- [ ] COMMON | 1.20 Restore Autobrr & Sizechecker files default SELinux
-- [ ] COMMON | 1.21 Ensure port 7474 is labeled with http_port_t for Autobrr
-- [ ] COMMON | 1.22 Add Autobrr backup & upgrade shell script
-- [ ] COMMON | 1.23 Add panic shell script
-- [ ] COMMON | 1.24 Systemd wide DefaultLimitNOFILE
-- [ ] COMMON | 1.25 Set soft nofile limit
-- [ ] COMMON | 1.26 Set hard nofile limit
-- [ ] COMMON | 1.27 Include sysctl vars
-- [ ] COMMON | 1.28 Set various sysctl settings
-- [ ] COMMON | 1.29 Remount a /home and change atime options
-- [ ] COMMON | 1.30 Install dynamic adaptive system tuning daemon
-- [ ] COMMON | 1.31 Configure tuned for latency-performance
+- [ ] COMMON | 1.18 Unarchive Mkbrr
+- [ ] COMMON | 1.19 Install Autobrr, Mkbrr & Sizechecker binaries
+- [ ] COMMON | 1.20 Add required package policycoreutils-python-utils
+- [ ] COMMON | 1.21 Restore Autobrr, Mkbrr & Sizechecker files default
+- [ ] COMMON | 1.22 Ensure port 7474 is labeled with http_port_t for Autobrr
+- [ ] COMMON | 1.23 Add Autobrr backup & upgrade shell script
+- [ ] COMMON | 1.24 Add panic shell script
+- [ ] COMMON | 1.25 Systemd wide DefaultLimitNOFILE
+- [ ] COMMON | 1.26 Set soft nofile limit
+- [ ] COMMON | 1.27 Set hard nofile limit
+- [ ] COMMON | 1.28 Include sysctl vars
+- [ ] COMMON | 1.29 Set various sysctl settings
+- [ ] COMMON | 1.30 Remount a /home and change atime options
+- [ ] COMMON | 1.31 Install dynamic adaptive system tuning daemon
+- [ ] COMMON | 1.32 Configure tuned for latency-performance
 
 ## 2. RTORRENT
 
