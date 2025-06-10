@@ -44,6 +44,7 @@
 - [ ] COMMON | 1.30 Remount a /home and change atime options
 - [ ] COMMON | 1.31 Install dynamic adaptive system tuning daemon
 - [ ] COMMON | 1.32 Configure tuned for latency-performance
+- [ ] COMMON | 1.33 Deploy benchmarking script
 
 ## 2. RTORRENT
 
