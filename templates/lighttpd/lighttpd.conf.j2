@@ -1,5 +1,5 @@
 # {{ ansible_managed }}
-var.server_root = "/var/www/ruTorrent"
+var.server_root = "{{ rutorrent_path }}"
 var.state_dir = "/run/lighttpd"
 var.home_dir = "/var/lib/lighttpd"
 var.conf_dir = "/etc/lighttpd"
@@ -7,6 +7,7 @@ var.vhosts_dir = server_root + "/vhosts"
 var.cache_dir = "/var/cache/lighttpd"
 var.socket_dir = state_dir + "/sockets"
 include "modules.conf"
+server.bind = "0.0.0.0"
 server.port = {{ https_port }}
 server.username = "lighttpd"
 server.groupname = "lighttpd"
@@ -19,6 +20,25 @@ server.network-backend = "sendfile"
 server.stat-cache-engine = "simple"
 server.stream-response-body = 1
 server.max-connections = 1024
+ssl.engine = "enable"
+ssl.privkey = "/etc/ssl/private/vsftpd.key"
+ssl.pemfile = "/etc/ssl/private/vsftpd.pem"
+$SERVER["socket"] == ":80" {
+    ssl.engine = "disable"
+    $HTTP["remoteip"] == "127.0.0.1" {
+    }
+    else {
+        url.redirect = ("^/(.*)" => "https://%0/$1")
+    }
+}
+$SERVER["socket"] == "[::]:80" {
+    ssl.engine = "disable"
+    $HTTP["remoteip"] == "::1" {
+    }
+    else {
+        url.redirect = ("^/(.*)" => "https://%0/$1")
+    }
+}
 index-file.names += (
   "index.xhtml", "index.html", "index.htm", "default.htm", "index.php"
 )
@@ -31,6 +51,3 @@ include "conf.d/mime.conf"
 include "conf.d/dirlisting.conf"
 server.follow-symlink = "enable"
 server.upload-dirs = ( "/var/tmp" )
-ssl.engine = "enable"
-ssl.privkey = "/etc/ssl/private/vsftpd.key"
-ssl.pemfile = "/etc/ssl/private/vsftpd.pem"
