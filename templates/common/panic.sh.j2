@@ -20,11 +20,11 @@ sudo systemctl is-active php-fpm
 sudo systemctl is-active lighttpd
 
 # Remove data
-rm -rvf /home/{{ ansible_user }}/.Session
+rm -rvf /home/{{ ansible_user }}/.session
 rm -rvf /home/{{ ansible_user }}/site
 
 # Re-create an empty folder structure
-mkdir -pv /home/{{ ansible_user }}/.Session
+mkdir -pv /home/{{ ansible_user }}/.session
 mkdir -pv /home/{{ ansible_user }}/site/.WatchAPPZ
 mkdir -pv /home/{{ ansible_user }}/site/.WatchGAMES
 mkdir -pv /home/{{ ansible_user }}/site/.WatchMISC
@@ -46,5 +46,5 @@ mkdir -pv /home/{{ ansible_user }}/site/UPLOAD
 mkdir -pv /home/{{ ansible_user }}/site/XXX
 
 # Change permissions of the newly created structure
-chmod -Rv 777 /home/{{ ansible_user }}/.Session
+chmod -Rv 777 /home/{{ ansible_user }}/.session
 chmod -Rv 777 /home/{{ ansible_user }}/site

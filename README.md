@@ -28,7 +28,7 @@ Common (section 1):
 * `set_timezone` - change the time zone of the server, defaults to Europe/Prague.
 * `set_google_dns` - if `true`, it will add Google DNS servers to the primary interface. Defaults to true.
 * `create_new_user` - whether you want to also create another user. Defaults to false. Relevant to the `new_user` variable.
-* `autobrr_ver` & `sizechecker_ver` - contains the latest [Autobrr](https://github.com/autobrr/autobrr/releases) and [Sizechecker](https://github.com/s0up4200/sizechecker/releases) versions. This gets regularly updated after tests.
+* `autobrr_ver`, `mkbrr_ver` & `sizechecker_ver` - contains the latest [Autobrr](https://github.com/autobrr/autobrr/releases), [Mkbrr](https://github.com/autobrr/mkbrr) and [Sizechecker](https://github.com/s0up4200/sizechecker/releases) versions. This gets regularly updated after the tests.
 * `sysctl_tunables` - on/off for various tuning options in [sysctl.yml](vars/sysctl.yml). Default is on.
 
 _Note:_ Lot of the tasks rely on `remote_user` / `ansible_user` variable (user who logs in to the remote machine via Ansible). For example, it creates directory structure under that user.
@@ -39,7 +39,7 @@ rTorrent (section 2):
 * `rtorrent_ver` - Version of the [rtorrent](https://github.com/rakshasa/rtorrent/releases). It should be identical to `libtorrent_ver`.
 * `rtorrent_port` - what port should rtorrent listen on. Default is **55442**.
 
-_Note:_ The ratio defaults should be sufficient (between [400%](vars/main.yml#L47)-[500%](vars/main.yml#L48)).
+_Note:_ The ratio defaults should be sufficient (between [400%](vars/main.yml#L59)-[500%](vars/main.yml#L60)).
 
 vsFTPd (section 3):
 
@@ -55,7 +55,7 @@ ruTorrent (section 4):
 
 Security (section 5):
 
-* `fail2ban_ignore_ipv4` - what IP addresses should be excluded from being banned by Fail2Ban, and the same value is also used in the **firewalld** limited zone for SSH (only these specified addresses are allowed to SSH to the seedbox). Whitelisted is arbitrary address `X.X.X.X` and the private IP ranges. :warning: You **need** to [change it](defaults/main.yml#L38) to your own :warning:
+* `fail2ban_ignore_ipv4` - what IP addresses should be excluded from being banned by Fail2Ban, and the same value is also used in the **firewalld** limited zone for SSH (only these specified addresses are allowed to SSH to the seedbox). Whitelisted is arbitrary address `X.X.X.X` and the private IP ranges. :warning: You **need** to [change it](defaults/main.yml#L39) to your own :warning:
 
 Reboot (section 7):
 
@@ -86,18 +86,18 @@ Example Playbook
 ```yaml
 ---
 - hosts: seedbox
-  remote_user: redhat
+  name: Playbook for zero_footprint_rutorrent_seedbox role
   roles:
-    - "luckylittle.zero_footprint_rutorrent_seedbox"
+    - "zero_footprint_rutorrent_seedbox"
 ```
 
 Testing
 -------
 
-|OS     |Version 2.3.0     |Version 2.3.1     |
-|-------|------------------|------------------|
-|RHEL9  |:white_check_mark:|:white_check_mark:|
-|CentOS9|:white_check_mark:|Not attempted     |
+|OS     |Version 2.3.0     |Version 2.3.1     |Version 2.4.0     |
+|-------|------------------|------------------|------------------|
+|RHEL9  |:white_check_mark:|:white_check_mark:|:white_check_mark:|
+|CentOS9|:white_check_mark:|Not attempted     |Not attempted     |
 
 On a brand new RHEL8.6, 1x vCPU, 4GB RAM playbook took 18m 32s to finish on VirtualBox.
 On a brand new Red Hat Enterprise Linux release 9.5 (Plow) on AWS (t3.medium), it took 18m 29s.
@@ -341,4 +341,4 @@ Author Information
 
 Lucian Maly <<lmaly@redhat.com>>
 
-_Last update: Thu 22 May 2025 05:40:49 UTC_
+_Last update: Wed 04 Jun 2025 05:28:12 UTC_

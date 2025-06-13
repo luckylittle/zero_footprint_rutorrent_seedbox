@@ -6,21 +6,7 @@
     name: "{{ item }}"
     state: absent
   become: true
-  loop:
-    - "audit"
-    - "cockpit"
-    - "gcc-c++"
-    - "gcc"
-    - "insights-client"
-    - "libcurl-devel"
-    - "make"
-    - "ncurses-devel"
-    - "openssl-devel"
-    - "policycoreutils-devel"
-    - "python3-cryptography"
-    - "python3-passlib"
-    - "rsyslog"
-    - "zlib-devel"
+  loop: "{{ cleanup_junk_rpms }}"
   tags:
     - cleanup
 
@@ -215,5 +201,16 @@
   register: dnf_clean_all
   changed_when: "'files removed' in dnf_clean_all.stdout"
   become: true
+  tags:
+    - cleanup
+
+- name: CLEANUP | 6.20 Disable unnecessary services
+  ansible.builtin.systemd:
+    state: "stopped"
+    enabled: false
+    daemon_reload: true
+    name: "{{ item }}"
+  become: true
+  loop: "{{ cleanup_junk_services }}"
   tags:
     - cleanup

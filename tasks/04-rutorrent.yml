@@ -7,16 +7,7 @@
     state: present
     disable_gpg_check: true
   become: true
-  loop:
-    - "lighttpd-fastcgi"
-    - "lighttpd"
-    - "php-dom"
-    - "php-fpm"
-    - "php-json"
-    - "php-libxml"
-    - "php-mbstring"
-    - "php"
-    - "python3-passlib"
+  loop: "{{ rutorrent_required_rpms }}"
   tags:
     - rutorrent
 

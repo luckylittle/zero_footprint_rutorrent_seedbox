@@ -14,14 +14,7 @@
     daemon_reload: true
     name: "{{ item }}"
   become: true
-  loop:
-    - "{{ autobrr_service }}"
-    - "fail2ban"
-    - "fstrim.timer"
-    - "lighttpd"
-    - "php-fpm"
-    - "rtorrent"
-    - "vsftpd"
+  loop: "{{ required_services }}"
   tags:
     - reboot
 

@@ -10,6 +10,7 @@
   when: "'X.X.X.X' in fail2ban_ignore_ipv4"
   tags:
     - common
+    - preflight
 
 - name: PREFLIGHT | 0.2 Get status of local users.txt file for vsftpd
   ansible.builtin.stat:
@@ -20,6 +21,7 @@
   when: not single_user
   tags:
     - common
+    - preflight
 
 - name: PREFLIGHT | 0.3 Ensure users.txt exists and is not empty for \
         multi-user vsftpd setup
@@ -34,3 +36,40 @@
       users_txt_stat_result.stat.size == 0
   tags:
     - common
+    - preflight
+
+- name: PREFLIGHT | 0.4 Read GRUB content
+  ansible.builtin.slurp:
+    src: "/etc/default/grub"
+  register: grub_config_b64
+  tags:
+    - common
+    - preflight
+
+- name: PREFLIGHT | 0.5 Select the relevant line
+  ansible.builtin.set_fact:
+    grub_line: "{{ (grub_config_b64.content | b64decode).split('\n') \
+                | select('match', '^GRUB_CMDLINE_LINUX=') | list }}"
+  tags:
+    - common
+    - preflight
+
+- name: PREFLIGHT | 0.6 Warn if crashkernel is undesirable
+  ansible.builtin.fail:
+    msg: >-
+      WARNING: crashkernel is set in "/etc/default/grub".
+      Set "crashkernel=no" and then regenerate GRUB:
+      `sudo grub2-mkconfig -o /boot/grub2/grub.cfg` !
+  when: >
+    (grub_line | lower is search('crashkernel=')) and
+    (grub_line | lower is not search('crashkernel=no'))
+  tags:
+    - common
+    - preflight
+
+- name: PREFLIGHT | 0.7 Display GRUB_CMDLINE_LINUX
+  ansible.builtin.debug:
+    msg: "{{ grub_line }}"
+  tags:
+    - common
+    - preflight

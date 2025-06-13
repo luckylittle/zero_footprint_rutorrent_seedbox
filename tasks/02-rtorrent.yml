@@ -7,17 +7,7 @@
     state: present
     disable_gpg_check: true
   become: true
-  loop:
-    - "{{ epel_dl }}"
-    - "gcc-c++"
-    - "gcc"
-    - "libcurl-devel"
-    - "make"
-    - "ncurses-devel"
-    - "openssl-devel"
-    - "tmux"
-    - "wget"
-    - "zlib-devel"
+  loop: "{{ rtorrent_required_rpms }}"
   tags:
     - rtorrent
 
