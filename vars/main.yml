@@ -196,6 +196,7 @@ cleanup_junk_services:
   - "avahi-daemon"
   - "bluetooth"
   - "cups"
+  - "dnf-makecache.timer"
   - "ModemManager"
   - "postfix"
   - "smartd"
