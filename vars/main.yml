@@ -31,7 +31,7 @@ sizechecker_url: "https://github.com/s0up4200/sizechecker/releases/download"
 mkbrr_url: "https://github.com/autobrr/mkbrr/releases/download"
 upgrade_autobrr_file: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
 panic_file: "/usr/local/bin/panic.sh"
-maximum_number_of_open_file_descriptors: "65535"
+maximum_number_of_open_file_descriptors: "262144"
 benchmark_file: "/usr/local/bin/bench.sh"
 
 # 02-rtorrent

@@ -45,12 +45,11 @@ throttle.max_peers.seed.set = -1
 trackers.numwant.set = 100
 protocol.encryption.set = allow_incoming,try_outgoing,enable_retry
 
-## Limits for file handle resources, this is optimized for
-## an `ulimit` of 1024 (a common default). You MUST leave
-## a ceiling of handles reserved for rTorrent's internal needs!
-network.http.max_open.set = {{ maximum_number_of_open_file_descriptors }}
-network.max_open_files.set = {{ maximum_number_of_open_file_descriptors }}
-network.max_open_sockets.set = {{ maximum_number_of_open_file_descriptors }}
+## Limits for file handle resources. These are the maximum configuration values of rT.
+## This is typically overwritten by DefaultLimitNOFILE
+network.http.max_open.set = 65536
+network.max_open_files.set = 65536
+network.max_open_sockets.set = 65536
 
 ## Memory resource usage (increase if you have a large number of items loaded,
 ## and/or the available resources to spend)
