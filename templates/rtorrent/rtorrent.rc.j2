@@ -42,11 +42,11 @@ throttle.max_peers.normal.set = 200
 throttle.min_peers.seed.set = -1
 throttle.max_peers.seed.set = -1
 # Set the numwant field sent to the tracker, which indicates how many peers we want. A negative value disables this feature. Default: `-1`
-trackers.numwant.set = 100
+trackers.numwant.set = -1
 protocol.encryption.set = allow_incoming,try_outgoing,enable_retry
 
 ## Limits for file handle resources. These are the maximum configuration values of rT.
-## This is typically overwritten by DefaultLimitNOFILE
+## This is typically overwritten by DefaultLimitNOFILE anyway
 network.http.max_open.set = 65536
 network.max_open_files.set = 65536
 network.max_open_sockets.set = 65536
@@ -88,18 +88,21 @@ method.insert = d.data_path, simple,\
     (cat, (d.directory), /),\
     (cat, (d.directory), /, (d.name))"
 method.insert = d.session_file, simple, "cat=(session.path), (d.hash), .torrent"
+{% if cross_seed %}
+method.set_key=event.download.finished,cross_seed,"execute={'{{ cross_seed_webhook }}',$d.hash=}"
+{% endif %}
 
 ## Watch directories (add more as you like, but use unique schedule names)
 schedule2 = untied_directory,1,2,remove_untied=
-schedule2 = watch_directory_1,7,7,"load.start=~/site/.WatchAPPZ/*.torrent,d.directory.set=~/site/APPZ/"
-schedule2 = watch_directory_2,7,7,"load.start=~/site/.WatchGAMES/*.torrent,d.directory.set=~/site/GAMES/"
-schedule2 = watch_directory_3,7,7,"load.start=~/site/.WatchMISC/*.torrent,d.directory.set=~/site/MISC/"
-schedule2 = watch_directory_4,7,7,"load.start=~/site/.WatchMP3/*.torrent,d.directory.set=~/site/MP3/"
-schedule2 = watch_directory_5,7,7,"load.start=~/site/.WatchTV-HD/*.torrent,d.directory.set=~/site/TV-HD/"
-schedule2 = watch_directory_6,7,7,"load.start=~/site/.WatchTV-SD/*.torrent,d.directory.set=~/site/TV-SD/"
-schedule2 = watch_directory_7,7,7,"load.start=~/site/.WatchMOVIES-SD/*.torrent,d.directory.set=~/site/MOVIES-SD/"
-schedule2 = watch_directory_8,7,7,"load.start=~/site/.WatchMOVIES-HD/*.torrent,d.directory.set=~/site/MOVIES-HD/"
-schedule2 = watch_directory_9,7,7,"load.start=~/site/.WatchXXX/*.torrent,d.directory.set=~/site/XXX/"
+schedule2 = watch_directory_1,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchAPPZ/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/APPZ/"
+schedule2 = watch_directory_2,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchGAMES/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/GAMES/"
+schedule2 = watch_directory_3,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchMISC/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/MISC/"
+schedule2 = watch_directory_4,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchMP3/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/MP3/"
+schedule2 = watch_directory_5,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchTV-HD/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/TV-HD/"
+schedule2 = watch_directory_6,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchTV-SD/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/TV-SD/"
+schedule2 = watch_directory_7,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchMOVIES-SD/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/MOVIES-SD/"
+schedule2 = watch_directory_8,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchMOVIES-HD/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/MOVIES-HD/"
+schedule2 = watch_directory_9,7,7,"load.start=/home/{{ ansible_user }}/site/.WatchXXX/*.torrent,d.directory.set=/home/{{ ansible_user }}/site/XXX/"
 
 # Ratio limits
 ratio.enable =
