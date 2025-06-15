@@ -10,6 +10,7 @@ autobrr_ver: "1.63.1"
 sizechecker_ver: "1.4.0"
 mkbrr_ver: "1.12.0"
 sysctl_tunables: true
+cross_seed: false
 
 # 02-rtorrent
 libtorrent_ver: "0.15.4"
