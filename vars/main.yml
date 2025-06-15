@@ -33,6 +33,12 @@ upgrade_autobrr_file: "/home/{{ ansible_user }}/upgrade_autobrr.sh"
 panic_file: "/usr/local/bin/panic.sh"
 maximum_number_of_open_file_descriptors: "262144"
 benchmark_file: "/usr/local/bin/bench.sh"
+nvm_ver: "0.40.3"
+node_ver: "20.19.2"
+cross_seed_config_file: "/home/{{ ansible_user }}/.cross-seed/config.js"
+cross_seed_start_file: "/usr/local/bin/start-cross-seed.sh"
+cross_seed_webhook: "/usr/local/bin/cross-seed-webhook.sh"
+cross_seed_service_file: "/etc/systemd/system/cross-seed.service"
 
 # 02-rtorrent
 epel_url: "https://dl.fedoraproject.org/pub/epel"
@@ -204,6 +210,7 @@ cleanup_junk_services:
 # 07-reboot
 required_services:
   - "{{ autobrr_service }}"
+  - "cross-seed"
   - "fail2ban"
   - "fstrim.timer"
   - "lighttpd"
