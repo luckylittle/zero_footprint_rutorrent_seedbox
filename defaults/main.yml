@@ -6,13 +6,15 @@ set_timezone: "Europe/Prague"
 set_google_dns: true
 create_new_user: false
 new_user: "redhat"
-autobrr_ver: "1.62.0"
+autobrr_ver: "1.63.1"
 sizechecker_ver: "1.4.0"
+mkbrr_ver: "1.12.0"
 sysctl_tunables: true
+cross_seed: false
 
 # 02-rtorrent
-libtorrent_ver: "0.15.3"
-rtorrent_ver: "0.15.3"
+libtorrent_ver: "0.15.4"
+rtorrent_ver: "0.15.4"
 rtorrent_port: 55442
 
 # 03-vsftpd
@@ -21,7 +23,7 @@ pasv_port_range: "64000-64321"
 single_user: true
 
 # 04-rutorrent
-rutorrent_ver: "5.2.5"
+rutorrent_ver: "5.2.8"
 https_port: 443
 htpasswd: !vault |
   $ANSIBLE_VAULT;1.1;AES256

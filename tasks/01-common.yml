@@ -164,10 +164,21 @@
   tags:
     - common
 
-- name: COMMON | 1.18 Install Autobrr & Sizechecker binaries
-  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr /home/\
-                            {{ ansible_user }}/autobrrctl \
+- name: COMMON | 1.18 Unarchive Mkbrr
+  ansible.builtin.unarchive:
+    src: "{{ mkbrr_url }}/\
+          v{{ mkbrr_ver }}/mkbrr_{{ mkbrr_ver }}_\
+          linux_x86_64.tar.gz"
+    dest: "/home/{{ ansible_user }}"
+    remote_src: true
+  tags:
+    - common
+
+- name: COMMON | 1.19 Install Autobrr, Mkbrr & Sizechecker binaries
+  ansible.builtin.command: "mv -v /home/{{ ansible_user }}/autobrr \
+                            /home/{{ ansible_user }}/autobrrctl \
                             /home/{{ ansible_user }}/sizechecker \
+                            /home/{{ ansible_user }}/mkbrr \
                             /usr/local/bin/"
   args:
     creates: "/usr/local/bin/autobrr"
@@ -175,19 +186,10 @@
   tags:
     - common
 
-- name: COMMON | 1.19 Add required package policycoreutils-python-utils
+- name: COMMON | 1.20 Add required package policycoreutils-python-utils
   ansible.builtin.dnf:
     name: "policycoreutils-python-utils"
     state: present
-  become: true
-  tags:
-    - common
-
-- name: COMMON | 1.20 Restore Autobrr & Sizechecker files default SELinux \
-        security contexts
-  ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
-  register: restorecon_usr_local_bin
-  changed_when: "'Relabeled' in restorecon_usr_local_bin.stdout"
   become: true
   tags:
     - common
@@ -264,5 +266,108 @@
   loop: "{{ sysctl_settings | dict2items }}"
   become: true
   when: sysctl_tunables
+  tags:
+    - common
+
+- name: COMMON | 1.29 Remount a /home and change atime options
+  ansible.posix.mount:
+    path: "/home"
+    state: "remounted"
+    opts: "noatime,nodiratime"
+    backup: true
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.30 Install dynamic adaptive system tuning daemon
+  ansible.builtin.dnf:
+    name: "tuned"
+    state: present
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.31 Configure tuned for latency-performance
+  ansible.builtin.command: "tuned-adm profile latency-performance"
+  changed_when: true
+  notify:
+    - "Restart tuned"
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.32 Deploy benchmarking script
+  ansible.builtin.copy:
+    src: "benchmark/bench.sh"
+    dest: "{{ benchmark_file }}"
+    backup: true
+    mode: "0644"
+  become: true
+  tags:
+    - common
+
+- name: COMMON | 1.33 Install & configure cross-seed
+  when: cross_seed
+  become: true
+  tags:
+    - common
+  block:
+    - name: COMMON | 1.33.1 Install nvm
+      ansible.builtin.shell: "curl -o- \
+        https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvm_ver }}\
+        /install.sh | bash"
+
+    - name: COMMON | 1.33.2 Upgrade npm
+      ansible.builtin.shell: "npm install -g npm"
+
+    - name: COMMON | 1.33.3 Install node
+      ansible.builtin.shell: "nvm install {{ node_ver }}"
+
+    - name: COMMON | 1.33.4 Install cross-seed
+      ansible.builtin.shell: "npm install -g cross-seed"
+
+    - name: COMMON | 1.33.5 Add cross-seed config directory
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/.cross-seed"
+        state: "directory"
+        mode: "0755"
+
+    - name: COMMON | 1.33.6 Configure cross-seed
+      ansible.builtin.template:
+        src: "cross_seed/config.js.j2"
+        dest: "{{ cross_seed_config_file }}"
+        backup: true
+        mode: "0644"
+
+    - name: COMMON | 1.33.7 Add cross-seed start script
+      ansible.builtin.template:
+        src: "cross_seed/start-cross-seed.sh.j2"
+        dest: "{{ cross_seed_start_file }}"
+        backup: true
+        mode: "0755"
+      become: true
+
+    - name: COMMON | 1.33.8 Add cross-seed webhook for rT
+      ansible.builtin.copy:
+        src: "cross_seed/cross-seed-webhook.sh"
+        dest: "{{ cross_seed_webhook }}"
+        backup: true
+        mode: "0755"
+      become: true
+
+    - name: COMMON | 1.33.9 Add cross-seed service
+      ansible.builtin.template:
+        src: "cross_seed/cross-seed.service.j2"
+        dest: "{{ cross_seed_service_file }}"
+        backup: true
+        mode: "0644"
+      become: true
+
+- name: COMMON | 1.34 Restore Autobrr, Mkbrr & Sizechecker files default \
+        SELinux security contexts
+  ansible.builtin.command: "restorecon -Rv /usr/local/bin/"
+  register: restorecon_usr_local_bin
+  changed_when: "'Relabeled' in restorecon_usr_local_bin.stdout"
+  become: true
   tags:
     - common

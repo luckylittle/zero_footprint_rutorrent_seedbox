@@ -6,10 +6,7 @@
     name: "{{ item }}"
     state: present
   become: true
-  loop:
-    - "fail2ban"
-    - "firewalld"
-    - "policycoreutils-devel"
+  loop: "{{ security_required_rpms }}"
   tags:
     - security
 
@@ -297,6 +294,17 @@
     regexp: '^HISTSIZE=1000$'
     line: "HISTSIZE=0\nHISTFILE=/dev/null"
     backup: true
+  become: true
+  tags:
+    - security
+
+- name: SECURITY | 5.25 Configure restricted sudo for ansible_user
+  community.general.sudoers:
+    name: "ansible-{{ ansible_user }}-custom-sudo"
+    user: "{{ ansible_user }}"
+    commands: "{{ restricted_sudo_commands }}"
+    nopassword: true
+    state: "present"
   become: true
   tags:
     - security
